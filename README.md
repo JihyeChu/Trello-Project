@@ -53,16 +53,21 @@
 ### ERD
 <details>
 <summary>더보기</summary>
-https://lucid.app/lucidchart/95b5264c-7d45-4c96-9e6e-f6c12d3c855e/edit?viewport_loc=289%2C117%2C2613%2C1105%2C0_0&invitationId=inv_eb32682b-d028-417b-bb09-547a19c07603
-
-
+![image](https://github.com/JihyeChu/Trello-Project/assets/51440636/2dcdcb21-74ae-4371-af8c-76cb8e844e8f)
 </details>
 <hr/>
 
-### 역할분담
-* 안정민 : 
-* 이성수 :  
-* 정민재 : 
-* 추지혜 :
+### 클래스 다이어그램
+<details>
+<summary>더보기</summary>
+![Trello.drawio.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/24ff5bb6-93d1-4ac0-b10c-d1bcf2c9cec6/Trello.drawio.png)
+</details>
+<hr/>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=footer" />
+### 역할분담    
+| 이름 | 역할 |
+| --- | --- |
+| 안정민 | 컬럼 관리 기능 |
+| 추지혜 | 카드 관리 기능 |
+| 이성수 | 보드 관리 기능 |
+| 정민재 | 사용자 관리 기능 |
