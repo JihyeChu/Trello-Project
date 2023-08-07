@@ -3,7 +3,7 @@
 ### 프로젝트
 * 팀명 : 에잇!
 * 내용 : Trello - 프로젝트 협업 도구 트렐로
-* [Notion](#https://www.notion.so/8-825c792fb90f47f5a01c1de05a9be36c)
+* [Notion](https://www.notion.so/8-825c792fb90f47f5a01c1de05a9be36c)
 <hr/>
 
 ### 기능
