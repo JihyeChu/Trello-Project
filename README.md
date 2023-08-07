@@ -53,9 +53,11 @@
 ### ERD
 <details>
 <summary>더보기</summary>
+https://lucid.app/lucidchart/95b5264c-7d45-4c96-9e6e-f6c12d3c855e/edit?viewport_loc=289%2C117%2C2613%2C1105%2C0_0&invitationId=inv_eb32682b-d028-417b-bb09-547a19c07603
+
+
 </details>
 <hr/>
-
 
 ### 역할분담
 * 안정민 : 
