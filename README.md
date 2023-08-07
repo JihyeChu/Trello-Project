@@ -53,14 +53,14 @@
 ### ERD
 <details>
 <summary>더보기</summary>
-![image](https://github.com/JihyeChu/Trello-Project/assets/51440636/2dcdcb21-74ae-4371-af8c-76cb8e844e8f)
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/2dcdcb21-74ae-4371-af8c-76cb8e844e8f'>
 </details>
 <hr/>
 
 ### 클래스 다이어그램
 <details>
 <summary>더보기</summary>
-![Trello.drawio.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/24ff5bb6-93d1-4ac0-b10c-d1bcf2c9cec6/Trello.drawio.png)
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/4424c18d-0768-4063-85a1-72453c7863ac'>
 </details>
 <hr/>
 
