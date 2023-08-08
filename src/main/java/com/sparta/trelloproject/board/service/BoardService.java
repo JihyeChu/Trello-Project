@@ -142,6 +142,12 @@ public class BoardService {
 
     BoardUser boardUser = new BoardUser(user, board);
 
+    if (!boardUserRepository
+        .findAllByOwnerUserAndCollaborateUserAndBoard(board.getUser(), user, board)
+        .isEmpty()) {
+      throw new IllegalArgumentException("이미 초대하셨습니다.");
+    }
+
     boardUserRepository.save(boardUser);
 
   }
