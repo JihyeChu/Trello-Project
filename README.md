@@ -50,6 +50,17 @@
 
 <hr/>
 
+### 와이어프레임
+<details>
+<summary>더보기</summary>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/c0c7c00d-6788-4e44-bd19-1fe0c936709b'>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/e9d675b6-e8c8-4883-bd43-430205b85f3e'>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/b7aba0fe-8220-4254-b567-5ce2787bda5d'>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/7b5f7512-2ec7-48db-951b-131ec76a4e14'>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/389a85dd-f737-498f-8d26-ef6177302601'>
+</details>
+<hr/>
+
 ### ERD
 <details>
 <summary>더보기</summary>
