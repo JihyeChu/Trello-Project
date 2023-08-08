@@ -1,12 +1,15 @@
 package com.sparta.trelloproject.user.service;
 
 import com.sparta.trelloproject.user.dto.AuthRequestDto;
+import com.sparta.trelloproject.user.dto.ProfileRequestDto;
+import com.sparta.trelloproject.user.dto.ProfileResponseDto;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.entity.UserRoleEnum;
 import com.sparta.trelloproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,5 +45,13 @@ public class UserService {
         if (!PasswordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+    }
+    @Transactional
+    public ProfileResponseDto updateProfile(User user, ProfileRequestDto profileRequestDto) {
+
+        user.setPassword(PasswordEncoder.encode(profileRequestDto.getPassword()));
+        user.setEmail(profileRequestDto.getEmail());
+
+        return new ProfileResponseDto(user);
     }
 }
