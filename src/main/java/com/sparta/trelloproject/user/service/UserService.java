@@ -46,12 +46,19 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
-    @Transactional
-    public ProfileResponseDto updateProfile(User user, ProfileRequestDto profileRequestDto) {
 
-        user.setPassword(PasswordEncoder.encode(profileRequestDto.getPassword()));
-        user.setEmail(profileRequestDto.getEmail());
-
+    public ProfileResponseDto getProfile(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
+        );
         return new ProfileResponseDto(user);
+    }
+    @Transactional
+    public void updateProfile(User user, ProfileRequestDto profileRequestDto) {
+        User findUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
+        );
+
+        findUser.setEmail(profileRequestDto.getEmail());
     }
 }

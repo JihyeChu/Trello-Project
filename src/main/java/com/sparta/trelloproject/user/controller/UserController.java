@@ -5,8 +5,10 @@ import com.sparta.trelloproject.common.jwt.JwtUtil;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
 import com.sparta.trelloproject.user.dto.AuthRequestDto;
 import com.sparta.trelloproject.user.dto.ProfileRequestDto;
+import com.sparta.trelloproject.user.dto.ProfileResponseDto;
 import com.sparta.trelloproject.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,11 @@ public class UserController {
         return ResponseEntity.ok().body(new ApiResponseDto("로그인 성공", HttpStatus.CREATED.value()));
     }
 
+    @GetMapping("/profile")
+    public ProfileResponseDto getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.getProfile(userDetails.getUser().getId());
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<ApiResponseDto> updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileRequestDto profileRequestDto){
         try {
@@ -52,6 +59,7 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ApiResponseDto("정보를 수정할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
         }
-        return ResponseEntity.ok().body(new ApiResponseDto("회원정보 수정 성공", HttpStatus.CREATED.value()));
+        return ResponseEntity.ok().body(new ApiResponseDto("회원정보 수정 성공", HttpStatus.OK.value()));
+
     }
 }

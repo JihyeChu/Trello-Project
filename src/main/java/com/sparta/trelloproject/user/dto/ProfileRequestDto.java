@@ -8,11 +8,9 @@ import lombok.Setter;
 @Setter
 public class ProfileRequestDto {
 
-    private String password;
     private String email;
 
-    public ProfileRequestDto(User user) {
-        this.password = user.getPassword();
-        this.email = user.getEmail();
-    }
+//    public ProfileRequestDto(User user) {
+//        this.email = user.getEmail();
+//    }
 }
