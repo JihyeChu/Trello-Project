@@ -44,6 +44,8 @@ public class Board {
   @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
   private List<BoardUser> boardUsers = new ArrayList<>();
 
+  @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+  private List<com.sparta.trelloproject.column.entity.Column> columns = new ArrayList<>();
 
   @Builder
   public Board(String boardName, String description, String color, User user) {
