@@ -9,6 +9,8 @@ import com.sparta.trelloproject.board.entity.Board;
 import com.sparta.trelloproject.board.entity.BoardUser;
 import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
+import com.sparta.trelloproject.column.dto.ColumnResponseDto;
+import com.sparta.trelloproject.column.repository.ColumnRepository;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.repository.UserRepository;
@@ -28,6 +30,7 @@ public class BoardService {
   private final BoardRepository boardRepository;
   private final UserRepository userRepository;
   private final BoardUserRepository boardUserRepository;
+  private final ColumnRepository columnRepository;
 
   // 보드 생성
   @Transactional
@@ -81,6 +84,9 @@ public class BoardService {
         .ownerUser(board.getUser().getUserName())
         .collaboraters(board.getBoardUsers().stream()
             .map(CollaboraterResponseDto::new)
+            .collect(Collectors.toList()))
+        .columnList(columnRepository.findAllByBoard(board).stream()
+            .map(ColumnResponseDto::new)
             .collect(Collectors.toList()))
         .build();
     return boardResponseDto;
@@ -140,13 +146,13 @@ public class BoardService {
       throw new IllegalArgumentException("본인은 추가할 필요 없습니다.");
     }
 
-    BoardUser boardUser = new BoardUser(user, board);
-
     if (!boardUserRepository
         .findAllByOwnerUserAndCollaborateUserAndBoard(board.getUser(), user, board)
         .isEmpty()) {
       throw new IllegalArgumentException("이미 초대하셨습니다.");
     }
+
+    BoardUser boardUser = new BoardUser(user, board);
 
     boardUserRepository.save(boardUser);
 

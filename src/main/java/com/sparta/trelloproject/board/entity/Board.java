@@ -1,9 +1,12 @@
 package com.sparta.trelloproject.board.entity;
 
+import com.sparta.trelloproject.common.color.ColorEnum;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,8 +36,8 @@ public class Board {
   @Column
   private String description;
 
-  @Column
-  private String color;
+  @Enumerated(EnumType.STRING)
+  private ColorEnum color;
 
   // 보드의 생성자(주인) 유저
   @ManyToOne(fetch = FetchType.LAZY)
@@ -44,16 +47,18 @@ public class Board {
   @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
   private List<BoardUser> boardUsers = new ArrayList<>();
 
+  @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+  private List<com.sparta.trelloproject.column.entity.Column> columns = new ArrayList<>();
 
   @Builder
-  public Board(String boardName, String description, String color, User user) {
+  public Board(String boardName, String description, ColorEnum color, User user) {
     this.boardName = boardName;
     this.description = description;
     this.color = color;
     this.user = user;
   }
 
-  public void update(String boardName, String description, String color) {
+  public void update(String boardName, String description, ColorEnum color) {
     this.boardName = boardName;
     this.description = description;
     this.color = color;

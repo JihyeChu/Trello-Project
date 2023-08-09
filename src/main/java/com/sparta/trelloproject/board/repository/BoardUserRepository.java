@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface BoardUserRepository extends JpaRepository<BoardUser, Long> {
 
   List<BoardUser> findAllByCollaborateUser(User user);
+  List<BoardUser> findAllByCollaborateUserAndBoard(User collaboraterUser, Board board);
   List<BoardUser> findAllByOwnerUserAndCollaborateUserAndBoard(User ownerUser, User collaboraterUser, Board board);
 }

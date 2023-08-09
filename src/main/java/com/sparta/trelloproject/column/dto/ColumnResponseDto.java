@@ -13,7 +13,7 @@ public class ColumnResponseDto {
 
     public ColumnResponseDto(Column column) {
         this.columnName = column.getColumnName();
-//        this.boardId = column.getBoard().getId();
+        this.boardId = column.getBoard().getId();
 //        this.cardList = column.getCardList().stream()
 //                .map(ColumnResponseDto::new)
 //                .sorted(Comparator.comparing(ColumnResponseDto::getCreateAt))
