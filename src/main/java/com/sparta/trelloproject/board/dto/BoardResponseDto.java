@@ -1,6 +1,7 @@
 package com.sparta.trelloproject.board.dto;
 
 import com.sparta.trelloproject.column.dto.ColumnResponseDto;
+import com.sparta.trelloproject.common.color.ColorEnum;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,13 +11,13 @@ public class BoardResponseDto {
 
   private String boardName;
   private String description;
-  private String color;
+  private ColorEnum color;
   private String ownerUser;
   private List<CollaboraterResponseDto> collaboraters;
   private List<ColumnResponseDto> columnList;
 
   @Builder
-  public BoardResponseDto(String boardName, String description, String color, String ownerUser,
+  public BoardResponseDto(String boardName, String description, ColorEnum color, String ownerUser,
       List<CollaboraterResponseDto> collaboraters,
       List<ColumnResponseDto> columnList) {
     this.boardName = boardName;
