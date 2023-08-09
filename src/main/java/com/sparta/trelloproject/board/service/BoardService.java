@@ -146,13 +146,13 @@ public class BoardService {
       throw new IllegalArgumentException("본인은 추가할 필요 없습니다.");
     }
 
-    BoardUser boardUser = new BoardUser(user, board);
-
     if (!boardUserRepository
         .findAllByOwnerUserAndCollaborateUserAndBoard(board.getUser(), user, board)
         .isEmpty()) {
       throw new IllegalArgumentException("이미 초대하셨습니다.");
     }
+
+    BoardUser boardUser = new BoardUser(user, board);
 
     boardUserRepository.save(boardUser);
 
