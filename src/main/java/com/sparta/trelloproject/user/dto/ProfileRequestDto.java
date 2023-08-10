@@ -9,8 +9,4 @@ import lombok.Setter;
 public class ProfileRequestDto {
 
     private String email;
-
-//    public ProfileRequestDto(User user) {
-//        this.email = user.getEmail();
-//    }
 }

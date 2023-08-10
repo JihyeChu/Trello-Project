@@ -18,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder PasswordEncoder;
 
+    // 회원가입
     public void signup(AuthRequestDto authRequestDto) {
         String userName = authRequestDto.getUserName();
         String password = PasswordEncoder.encode(authRequestDto.getPassword());
@@ -32,6 +33,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // 로그인
     public void login(AuthRequestDto authRequestDto) {
         String userName = authRequestDto.getUserName();
         String password = authRequestDto.getPassword();
@@ -47,18 +49,24 @@ public class UserService {
         }
     }
 
+    // 프로필 조회
     public ProfileResponseDto getProfile(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
-        );
+        User user = findUser(id);
+
         return new ProfileResponseDto(user);
     }
+
+    // 프로필 수정
     @Transactional
-    public void updateProfile(User user, ProfileRequestDto profileRequestDto) {
-        User findUser = userRepository.findById(user.getId()).orElseThrow(
+    public void updateProfile(Long id, ProfileRequestDto profileRequestDto) {
+        User user = findUser(id);
+
+        user.setEmail(profileRequestDto.getEmail());
+    }
+
+    public User findUser(Long id){
+        return userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
         );
-
-        findUser.setEmail(profileRequestDto.getEmail());
     }
 }

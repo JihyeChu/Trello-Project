@@ -22,6 +22,7 @@ public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
+    //회원가입
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto> sighUp (@RequestBody AuthRequestDto authRequestDto){
 
@@ -33,6 +34,7 @@ public class UserController {
         return ResponseEntity.ok().body(new ApiResponseDto("회원가입 성공", HttpStatus.CREATED.value()));
     }
 
+    //로그인
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto> login (@RequestBody AuthRequestDto authRequestDto, HttpServletResponse servletResponse){
 
@@ -47,15 +49,17 @@ public class UserController {
         return ResponseEntity.ok().body(new ApiResponseDto("로그인 성공", HttpStatus.CREATED.value()));
     }
 
+    //프로필 조회
     @GetMapping("/profile")
     public ProfileResponseDto getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.getProfile(userDetails.getUser().getId());
     }
 
+    //프로필 수정
     @PutMapping("/profile")
     public ResponseEntity<ApiResponseDto> updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileRequestDto profileRequestDto){
         try {
-            userService.updateProfile(userDetails.getUser(), profileRequestDto);
+            userService.updateProfile(userDetails.getUser().getId(), profileRequestDto);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ApiResponseDto("정보를 수정할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
         }
