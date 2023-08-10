@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new UsernameNotFoundException("만료된 토큰입니다."));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자가 존재하지 않습니다."));
 
         return new UserDetailsImpl(user);
     }

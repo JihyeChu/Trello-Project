@@ -42,11 +42,4 @@ public class GlobalControllerAdvice {
         ApiResponseDto apiResponseDto = new ApiResponseDto("지정된 색만 입력할 수 있습니다.", HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(apiResponseDto, HttpStatus.BAD_REQUEST);
     }
-
-    // 토큰 만료시
-    @ExceptionHandler({UsernameNotFoundException.class})
-    public ResponseEntity<ApiResponseDto> handleException(UsernameNotFoundException ex) {
-        ApiResponseDto apiResponseDto = new ApiResponseDto(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
-        return new ResponseEntity<>(apiResponseDto, HttpStatus.UNAUTHORIZED);
-    }
 }
