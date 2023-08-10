@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class BoardListResponseDto {
-  private String boardName;
-  private String description;
-  private ColorEnum color;
+    private String boardName;
+    private String description;
+    private ColorEnum color;
 
-  public BoardListResponseDto(Board board) {
-    this.boardName = board.getBoardName();
-    this.description = board.getDescription();
-    this.color = board.getColor();
-  }
+    public BoardListResponseDto(Board board) {
+        this.boardName = board.getBoardName();
+        this.description = board.getDescription();
+        this.color = board.getColor();
+    }
 }

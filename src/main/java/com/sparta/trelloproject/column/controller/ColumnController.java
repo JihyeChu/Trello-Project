@@ -28,8 +28,9 @@ public class ColumnController {
     }
 
     @GetMapping("/{boardId}/columns")
-    public ResponseEntity<List<ColumnResponseDto>> getColumn(@PathVariable("boardId") Long boardId) {
-        List<ColumnResponseDto> columnList = columnService.getColumn();
+    public ResponseEntity<List<ColumnResponseDto>> getColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                             @PathVariable("boardId") Long boardId) {
+        List<ColumnResponseDto> columnList = columnService.getColumn(userDetails.getUser(), boardId);
         return ResponseEntity.ok().body(columnList);
     }
 

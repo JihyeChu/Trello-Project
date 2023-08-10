@@ -1,12 +1,9 @@
 package com.sparta.trelloproject.column.entity;
 
 import com.sparta.trelloproject.board.entity.Board;
-import com.sparta.trelloproject.card.entity.Card;
 import com.sparta.trelloproject.column.dto.ColumnRequestDto;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
