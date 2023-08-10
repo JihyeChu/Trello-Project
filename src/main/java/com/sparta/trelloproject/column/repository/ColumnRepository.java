@@ -11,4 +11,6 @@ public interface ColumnRepository extends JpaRepository<Column, Long> {
     Optional<Column> findByBoardIdAndId(Long boardId, Long ColumnId);
 
     List<Column> findAllByBoard(Board board);
+
+    List<Column> findAllByBoardIdOrderByPositionAsc(Long boardId);
 }

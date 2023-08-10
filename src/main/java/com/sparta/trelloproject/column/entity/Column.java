@@ -19,6 +19,8 @@ public class Column {
     @jakarta.persistence.Column
     private String columnName;
 
+    private int position;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
@@ -30,13 +32,19 @@ public class Column {
 //    @OneToMany(mappedBy = "column", cascade = CascadeType.REMOVE)
 //    private List<Card> cardList = new ArrayList<>();
 
-    public Column(String columnName, Board board, User user) {
+    public Column(String columnName, Board board, User user, int position) {
         this.columnName = columnName;
         this.board = board;
         this.user = user;
+        this.position = position;
     }
 
     public void update(ColumnRequestDto requestDto) {
         this.columnName = requestDto.getColumnName();
+    }
+
+    public void moveColumn(Board board, int position) {
+        this.board = board;
+        this.position = position;
     }
 }
