@@ -1,10 +1,13 @@
 package com.sparta.trelloproject.user.service;
 
 import com.sparta.trelloproject.user.dto.AuthRequestDto;
+import com.sparta.trelloproject.user.dto.PasswordRequestDto;
 import com.sparta.trelloproject.user.dto.ProfileRequestDto;
 import com.sparta.trelloproject.user.dto.ProfileResponseDto;
+import com.sparta.trelloproject.user.entity.Password;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.entity.UserRoleEnum;
+import com.sparta.trelloproject.user.repository.PasswordRepository;
 import com.sparta.trelloproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder PasswordEncoder;
+    private final PasswordRepository passwordRepository;
 
     // 회원가입
     public void signup(AuthRequestDto authRequestDto) {
@@ -68,5 +72,21 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
         );
+    }
+
+    // 비밀번호 변경
+    @Transactional
+    public void updatePassword(PasswordRequestDto passwordRequestDto, Long id){
+        User user = findUser(id);
+        Password passwordEntity = passwordRepository.findByUser(user);
+
+
+    }
+
+    private String checkPassword(String newPassword, Password passwordEntity){
+        if (PasswordEncoder.matches(newPassword, passwordEntity.getFirstPassword())){
+            throw new IllegalArgumentException("이전 비밀번호와 동일합니다.");
+        }
+        return newPassword;
     }
 }

@@ -25,9 +25,9 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+//    private Password passwordEntity;
+
     public void setEmail(String email) {
         this.email = email;
     }
