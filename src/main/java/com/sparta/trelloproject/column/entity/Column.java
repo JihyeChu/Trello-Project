@@ -43,8 +43,7 @@ public class Column {
         this.columnName = requestDto.getColumnName();
     }
 
-    public void moveColumn(Board board, int position) {
-        this.board = board;
+    public void moveColumn(int position) {
         this.position = position;
     }
 }

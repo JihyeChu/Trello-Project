@@ -48,7 +48,8 @@ public class ColumnService {
         if (checkOwnerCollaborater(user, board)) {
             throw new IllegalArgumentException("컬럼 조회 권한이 없습니다.");
         }
-        return columnRepository.findAllByBoard(board).stream().map(ColumnResponseDto::new)
+        return columnRepository.findAllByBoardIdOrderByPositionAsc(boardId).stream()
+                .map(ColumnResponseDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -70,41 +71,35 @@ public class ColumnService {
         Column column = findColumn(boardId, columnId);
 
         if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("컬럼 수정 권한이 없습니다.");
+            throw new IllegalArgumentException("컬럼 삭제 권한이 없습니다.");
         }
 
         columnRepository.delete(column);
     }
 
     @Transactional
-    public List<ColumnResponseDto> moveColumn(User user, Long boardId, Long columnId, ColumnMoveDto moveDto) {
+    public List<ColumnResponseDto> moveColumn(User user, Long boardId, ColumnMoveDto moveDto) {
         Board board = findBoard(boardId);
 
         if (checkOwnerCollaborater(user, board)) {
             throw new IllegalArgumentException("해당 보드의 권한이 없습니다.");
         }
 
-        // 이동시킬 보드
-        Board selectBoard = findBoard(moveDto.getSelectBoardId());
-        if (checkOwnerCollaborater(user, selectBoard)) {
-            throw new IllegalArgumentException("해당 보드의 권한이 없습니다.");
-        }
-
         // 이동시킬 컬럼
-        Column currentColumn = findColumn(boardId, columnId);
+        Column currentColumn = findColumn(boardId, (long) moveDto.getSelectColumn());
         // selectPosition = 컬럼을 이동시킬 위치
-        Column selectColumn = selectBoard.getColumns().get(moveDto.getSelectIndex()-1);
+        Column selectColumn = board.getColumns().get(moveDto.getSelectIndex()-1);
         int selectPosition = selectColumn.getPosition();
 
         // 위치 순으로 정렬된 컬럼
-        List<Column> sortedColumnList = columnRepository.findAllByBoardIdOrderByPositionAsc(selectBoard.getId());
+        List<Column> sortedColumnList = columnRepository.findAllByBoardIdOrderByPositionAsc(boardId);
 
         // selectColumn 앞 혹은 뒤 position
         int aroundPosition;
         aroundPosition = getAroundPosition(moveDto, sortedColumnList);
 
         // 이동
-        move(selectBoard, currentColumn, selectPosition, aroundPosition);
+        move(currentColumn, selectPosition, aroundPosition);
 
         return columnRepository.findAllByBoardIdOrderByPositionAsc(boardId).stream()
                 .map(ColumnResponseDto::new)
@@ -128,9 +123,9 @@ public class ColumnService {
                 () -> new IllegalArgumentException("선택한 Column 이 존재하지 않습니다. boardId : " + boardId + ", columnId : " + columnId));
     }
 
-    private void move(Board selectBoard, Column currentColumn, int selectPosition, int aroundPosition) {
+    private void move(Column currentColumn, int selectPosition, int aroundPosition) {
         int movePosition = (selectPosition + aroundPosition) / 2 ;
-        currentColumn.moveColumn(selectBoard, movePosition);
+        currentColumn.moveColumn(movePosition);
     }
 
     private int getAroundPosition(ColumnMoveDto moveDto, List<Column> sortedColumnList) {

@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class ColumnMoveDto {
     @NotBlank
-    private Long selectBoardId;
+    private int selectColumn;
 
     @NotBlank
     private int selectIndex;

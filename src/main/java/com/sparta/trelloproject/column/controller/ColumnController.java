@@ -56,12 +56,11 @@ public class ColumnController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto("컬럼 삭제 완료", HttpStatus.OK.value()));
     }
 
-    @PutMapping("/{boardId}/columns/{columnId}/order")
+    @PutMapping("/{boardId}/columns/order")
     public ResponseEntity<List<ColumnResponseDto>> moveColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                               @PathVariable("boardId") Long boardId,
-                                                              @PathVariable("columnId") Long columnId,
                                                               @RequestBody ColumnMoveDto moveDto) {
-        List<ColumnResponseDto> results = columnService.moveColumn(userDetails.getUser(), boardId, columnId, moveDto);
+        List<ColumnResponseDto> results = columnService.moveColumn(userDetails.getUser(), boardId, moveDto);
         return ResponseEntity.ok().body(results);
     }
 }
