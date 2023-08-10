@@ -4,6 +4,7 @@ import com.sparta.trelloproject.common.api.ApiResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,5 +43,10 @@ public class GlobalControllerAdvice {
         return new ResponseEntity<>(apiResponseDto, HttpStatus.BAD_REQUEST);
     }
 
-    //
+    // 토큰 만료시
+    @ExceptionHandler({UsernameNotFoundException.class})
+    public ResponseEntity<ApiResponseDto> handleException(UsernameNotFoundException ex) {
+        ApiResponseDto apiResponseDto = new ApiResponseDto(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.UNAUTHORIZED);
+    }
 }
