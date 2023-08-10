@@ -63,8 +63,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         log.info("로그인 실패");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(new ApiResponseDto("로그인 실패", HttpStatus.UNAUTHORIZED.value())));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(new ApiResponseDto("아이디 또는 비밀번호를 확인해 주세요.", HttpStatus.UNAUTHORIZED.value())));
     }
 }
