@@ -28,19 +28,4 @@ public class UserService {
         User user = new User(userName, password, email, role);
         userRepository.save(user);
     }
-
-    public void login(AuthRequestDto authRequestDto) {
-        String userName = authRequestDto.getUserName();
-        String password = authRequestDto.getPassword();
-
-        //Id 확인
-        User user = userRepository.findByUserName(userName).orElseThrow(
-                () -> new IllegalArgumentException("Id가 틀렸습니다.")
-        );
-
-        //패스워드 확인
-        if (!PasswordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-    }
 }
