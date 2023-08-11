@@ -93,7 +93,7 @@ public class BoardService {
                 .collaboraters(board.getBoardUsers().stream()
                         .map(CollaboraterResponseDto::new)
                         .collect(Collectors.toList()))
-                .columnNames(columnRepository.findAllByBoard(board).stream()
+                .columnNames(columnRepository.findAllByBoardIdOrderByPositionAsc(board.getId()).stream()
                         .map(ColumnNameResponseDto::new)
                         .collect(Collectors.toList()))
                 .build();
