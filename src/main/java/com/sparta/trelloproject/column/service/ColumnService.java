@@ -1,11 +1,11 @@
 package com.sparta.trelloproject.column.service;
 
-import com.sparta.trelloproject.board.entity.Board;
+import com.sparta.trelloproject.board.entity.BoardEntity;
 import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.column.dto.ColumnRequestDto;
 import com.sparta.trelloproject.column.dto.ColumnResponseDto;
-import com.sparta.trelloproject.column.entity.Column;
+import com.sparta.trelloproject.column.entity.ColumnEntity;
 import com.sparta.trelloproject.column.repository.ColumnRepository;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.entity.UserRoleEnum;
@@ -26,7 +26,7 @@ public class ColumnService {
 
   @Transactional
   public void createColumn(User user, Long boardId, ColumnRequestDto requestDto) {
-    Board board = boardRepository.findById(boardId)
+    BoardEntity board = boardRepository.findById(boardId)
         .orElseThrow(() -> new NullPointerException("선택한 Board 가 존재하지 않습니다. boardId : " + boardId));
 
     // 보드생성자, 콜라보레이터만 생성가능
@@ -34,7 +34,7 @@ public class ColumnService {
       throw new IllegalArgumentException("컬럼생성 권한이 없습니다.");
     }
 
-    Column column = new Column(requestDto.getColumnName(), board, user);
+    ColumnEntity column = new ColumnEntity(requestDto.getColumnName(), board, user);
 
     columnRepository.save(column);
   }
@@ -47,7 +47,7 @@ public class ColumnService {
 
   @Transactional
   public void updateColumn(User user, ColumnRequestDto requestDto, Long boardId, Long columnId) {
-    Column column = columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
+    ColumnEntity column = columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
         () -> new NullPointerException(
             "선택한 Column 이 존재하지 않습니다. boardId : " + boardId + "columnId : " + columnId));
 
@@ -60,7 +60,7 @@ public class ColumnService {
 
   @Transactional
   public void deleteColumn(User user, Long boardId, Long columnId) {
-    Column column = columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
+    ColumnEntity column = columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
         () -> new NullPointerException(
             "선택한 Column 이 존재하지 않습니다. boardId : " + boardId + "columnId : " + columnId));
 
@@ -72,7 +72,7 @@ public class ColumnService {
   }
 
   // 컬럼 변경 권한 체크
-  private boolean checkOwnerCollaborater(User user, Board board) {
+  private boolean checkOwnerCollaborater(User user, BoardEntity board) {
     boolean result = boardUserRepository.findAllByCollaborateUserAndBoard(user, board).isEmpty()
         && board.getUser().getId() != user.getId(); // 콜라보레이터에 해당유저 없고 보드생성자도 아닐경우 true.
       return result;

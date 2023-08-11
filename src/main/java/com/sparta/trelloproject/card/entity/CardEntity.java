@@ -1,18 +1,28 @@
 package com.sparta.trelloproject.card.entity;
 
+import com.sparta.trelloproject.card.dto.CardAssignRequestDto;
+import com.sparta.trelloproject.card.dto.CardAssignResponseDto;
 import com.sparta.trelloproject.card.dto.CardRequestDto;
+import com.sparta.trelloproject.column.entity.ColumnEntity;
+import com.sparta.trelloproject.common.color.ColorEnum;
+import com.sparta.trelloproject.common.timestamped.TimeStamped;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name="card_table")
-public class Card {
+@Table(name="card_tb")
+public class CardEntity extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,33 +34,30 @@ public class Card {
     @Column(name="description", nullable = false)
     private String description;
 
-    @Column(name="color")
-    private String color;
+    @Enumerated(EnumType.STRING)
+    private ColorEnum color;
 
     @Column(name="closingdate", nullable = false)
-    private String closingDate;
+    private LocalDateTime closingDate;
 
-    @Column(name="worker", nullable = false)
-    private String worker;
+    @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
+    private List<CardAssignEntity> workerList = new ArrayList<>();
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="board_id")
-//    private Board board;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "column_id")
-//    private Column column;
-//
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "column_id")
+    private ColumnEntity column;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
 
-    public Card(CardRequestDto requestDto){
+    public CardEntity(CardRequestDto requestDto, User user, ColumnEntity column){
         this.cardName = requestDto.getCardName();
         this.description = requestDto.getDescription();
-        this.color = requestDto.getColor();
         this.closingDate = requestDto.getClosingDate();
-        this.worker = requestDto.getWorker();
+        this.color = requestDto.getColor();
+        this.user = user;
+        this.column = column;
     }
 
     public void update(CardRequestDto requestDto) {

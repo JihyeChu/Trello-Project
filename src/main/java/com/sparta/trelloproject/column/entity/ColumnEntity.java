@@ -1,12 +1,9 @@
 package com.sparta.trelloproject.column.entity;
 
-import com.sparta.trelloproject.board.entity.Board;
-import com.sparta.trelloproject.card.entity.Card;
+import com.sparta.trelloproject.board.entity.BoardEntity;
 import com.sparta.trelloproject.column.dto.ColumnRequestDto;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,17 +11,17 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "column_tb")
-public class Column {
+public class ColumnEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @jakarta.persistence.Column
+    @Column
     private String columnName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
-    private Board board;
+    private BoardEntity board;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -33,7 +30,7 @@ public class Column {
 //    @OneToMany(mappedBy = "column", cascade = CascadeType.REMOVE)
 //    private List<Card> cardList = new ArrayList<>();
 
-    public Column(String columnName, Board board, User user) {
+    public ColumnEntity(String columnName, BoardEntity board, User user) {
         this.columnName = columnName;
         this.board = board;
         this.user = user;

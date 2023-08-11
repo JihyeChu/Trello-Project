@@ -1,5 +1,6 @@
 package com.sparta.trelloproject.board.entity;
 
+import com.sparta.trelloproject.column.entity.ColumnEntity;
 import com.sparta.trelloproject.common.color.ColorEnum;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.CascadeType;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board {
+public class BoardEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,13 +46,13 @@ public class Board {
   private User user;
 
   @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-  private List<BoardUser> boardUsers = new ArrayList<>();
+  private List<BoardUserEntity> boardUsers = new ArrayList<>();
 
   @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-  private List<com.sparta.trelloproject.column.entity.Column> columns = new ArrayList<>();
+  private List<ColumnEntity> columns = new ArrayList<>();
 
   @Builder
-  public Board(String boardName, String description, ColorEnum color, User user) {
+  public BoardEntity(String boardName, String description, ColorEnum color, User user) {
     this.boardName = boardName;
     this.description = description;
     this.color = color;
@@ -64,7 +65,7 @@ public class Board {
     this.color = color;
   }
 
-  public void addBaordUser(BoardUser boardUser) {
+  public void addBaordUser(BoardUserEntity boardUser) {
     this.boardUsers.add(boardUser);
   }
 

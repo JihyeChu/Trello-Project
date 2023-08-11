@@ -1,22 +1,31 @@
 package com.sparta.trelloproject.card.dto;
 
-import com.sparta.trelloproject.card.entity.Card;
+import com.sparta.trelloproject.card.entity.CardAssignEntity;
+import com.sparta.trelloproject.card.entity.CardEntity;
+import com.sparta.trelloproject.common.color.ColorEnum;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class CardResponseDto {
 
     private String cardName;
     private String description;
-    private String color;
-    private String closingDate;
-    private String worker;
+    private ColorEnum color;
+    private LocalDateTime closingDate;
+    private List<CardAssignResponseDto> worker;
 
-    public CardResponseDto(Card card) {
+    public CardResponseDto(CardEntity card) {
         this.cardName = card.getCardName();
         this.description = card.getDescription();
         this.color = card.getColor();
         this.closingDate = card.getClosingDate();
-        this.worker = card.getWorker();
+        this.worker = new ArrayList<>();
+        for(CardAssignEntity assignEntity : card.getWorkerList()){
+            worker.add(new CardAssignResponseDto(assignEntity));
+        }
     }
 }

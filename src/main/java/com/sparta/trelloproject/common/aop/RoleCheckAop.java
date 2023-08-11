@@ -1,6 +1,6 @@
 package com.sparta.trelloproject.common.aop;
 
-import com.sparta.trelloproject.card.entity.Card;
+import com.sparta.trelloproject.card.entity.CardEntity;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.entity.UserRoleEnum;
@@ -28,7 +28,7 @@ public class RoleCheckAop {
 
     @Around("updateCard() || deleteCard()")
     public Object executeCardRoleCheck(ProceedingJoinPoint joinPoint) throws Throwable{
-        Card card = (Card)joinPoint.getArgs()[0];
+        CardEntity card = (CardEntity)joinPoint.getArgs()[0];
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null && auth.getPrincipal().getClass() == UserDetailsImpl.class){
