@@ -1,6 +1,7 @@
 package com.sparta.trelloproject.card.service;
 
-import com.sparta.trelloproject.board.entity.BoardUserEntity;
+import com.sparta.trelloproject.board.entity.BoardEntity;
+import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.card.dto.*;
 import com.sparta.trelloproject.card.entity.CardAssignEntity;
@@ -9,7 +10,7 @@ import com.sparta.trelloproject.card.repository.CardAssignRepository;
 import com.sparta.trelloproject.card.repository.CardRepository;
 import com.sparta.trelloproject.column.entity.ColumnEntity;
 import com.sparta.trelloproject.column.repository.ColumnRepository;
-import com.sparta.trelloproject.common.security.UserDetailsImpl;
+import com.sparta.trelloproject.column.service.ColumnService;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +24,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
 
+    private final BoardRepository boardRepository;
     private final ColumnRepository columnRepository;
     private final CardRepository cardRepository;
     private final CardAssignRepository cardAssignRepository;
+    private final ColumnService columnService;
     private final BoardUserRepository boardUserRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public CardResponseDto createCard(CardRequestDto requestDto, User user, Long columnId) {
-        ColumnEntity column = findColumn(columnId);
-        CardEntity card = new CardEntity(requestDto, user, column);
+    public CardResponseDto createCard(CardRequestDto requestDto, User user,Long boardId, Long columnId) {
+        BoardEntity board = findBoard(boardId);
+        ColumnEntity column = findColumn(boardId, columnId);
+        CardEntity card = new CardEntity(requestDto, user, board, column);
         card.setUser(user);
 
         cardRepository.save(card);
@@ -48,8 +52,8 @@ public class CardService {
     }
 
     @Transactional(readOnly = true)
-    public CardResponseDto getCardById(Long id) {
-        CardEntity card = findCard(id);
+    public CardResponseDto getCardById(Long boardId, Long columnId, Long cardId) {
+        CardEntity card = findCard(boardId, columnId, cardId);
         return new CardResponseDto(card);
     }
 
@@ -64,31 +68,46 @@ public class CardService {
         cardRepository.delete(card);
     }
 
-    public ColumnEntity findColumn(Long id){
-        return columnRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("선택한 칼럼은 존재하지 않습니다.")
-        );
-    }
+
 
     // 작업 할당
     @Transactional
-    public CardAssignResponseDto assignTask(User user, Long columnId, Long cardId, CardAssignRequestDto requestDto) {
-        ColumnEntity column = findColumn(columnId);
+    public CardAssignResponseDto assignTask(User user,Long boardId, Long columnId, Long cardId, CardAssignRequestDto requestDto) {
+        BoardEntity board = findBoard(boardId);
+        ColumnEntity column = findColumn(boardId, columnId);
+        CardEntity card = findCard(boardId, columnId, cardId);
 
-        boardUserRepository.findByUserAndBoardId(user.getId(), column.getBoard().getId()).orElseThrow(() ->
-                new IllegalArgumentException("보드에 속한 유저가 아닙니다."));
+        if(columnService.checkOwnerCollaborater(user, board)){
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+//        boardUserRepository.findAllByOwnerUserAndCollaborateUserAndBoard(board.getUser(), user, board);
 
-        CardAssignEntity assignEntity = new CardAssignEntity(requestDto);
+        CardAssignEntity assignEntity = new CardAssignEntity(requestDto, board, column, card);
         cardAssignRepository.save(assignEntity);
 
         return new CardAssignResponseDto(assignEntity);
     }
 
-    // 작업 할당 whghl
+    public BoardEntity findBoard(Long id){
+        return boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("선택한 보드는 존재하지 않습니다.")
+        );
+    }
 
+    public ColumnEntity findColumn(Long boardId, Long columnId){
+        return columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
+                () -> new IllegalArgumentException("선택한 칼럼은 존재하지 않습니다.")
+        );
+    }
 
-    public CardEntity findCard(Long id){
-        return cardRepository.findById(id).orElseThrow(
+    public CardEntity findCard(Long boardId, Long columnId, Long cardId){
+        return cardRepository.findByBoardIdAndColumnIdAndId(boardId, columnId, cardId).orElseThrow(
+                () -> new IllegalArgumentException("선택한 카드는 존재하지 않습니다.")
+        );
+    }
+
+    public CardEntity findCard(Long cardId) {
+        return cardRepository.findById(cardId).orElseThrow(
                 () -> new IllegalArgumentException("선택한 카드는 존재하지 않습니다.")
         );
     }

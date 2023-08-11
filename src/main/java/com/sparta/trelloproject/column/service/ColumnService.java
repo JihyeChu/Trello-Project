@@ -72,7 +72,7 @@ public class ColumnService {
   }
 
   // 컬럼 변경 권한 체크
-  private boolean checkOwnerCollaborater(User user, BoardEntity board) {
+  public boolean checkOwnerCollaborater(User user, BoardEntity board) {
     boolean result = boardUserRepository.findAllByCollaborateUserAndBoard(user, board).isEmpty()
         && board.getUser().getId() != user.getId(); // 콜라보레이터에 해당유저 없고 보드생성자도 아닐경우 true.
       return result;

@@ -14,17 +14,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
-@RequestMapping("/api/cards")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CardController {
 
     private final CardService cardService;
 
-    @PostMapping("/columns/{columnId}/cards")
+    @PostMapping("/boards/{boardId}/columns/{columnId}/cards")
     public ResponseEntity<CardResponseDto> createCard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                      @PathVariable("boardId") Long boardId,
                                                       @PathVariable("columnId") Long columnId,
                                                       @RequestBody CardRequestDto requestDto) {
-        CardResponseDto result = cardService.createCard(requestDto, userDetails.getUser(), columnId);
+        CardResponseDto result = cardService.createCard(requestDto, userDetails.getUser(), boardId, columnId);
 
         return ResponseEntity.status(201).body(result);
     }
@@ -37,16 +38,20 @@ public class CardController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CardResponseDto> getCard(@PathVariable Long id) {
-        CardResponseDto result = cardService.getCardById(id);
+    @GetMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
+    public ResponseEntity<CardResponseDto> getCard( @PathVariable Long boardId,
+                                                    @PathVariable Long columnId,
+                                                    @PathVariable Long cardId) {
+        CardResponseDto result = cardService.getCardById(boardId, columnId, cardId);
         return ResponseEntity.ok().body(result);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CardResponseDto> updateCard(@PathVariable Long id, @RequestBody CardRequestDto requestDto) {
+    @PutMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
+    public ResponseEntity<CardResponseDto> updateCard( @PathVariable Long boardId,
+                                                       @PathVariable Long columnId,
+                                                       @PathVariable Long cardId, @RequestBody CardRequestDto requestDto) {
         try {
-            CardEntity card = cardService.findCard(id);
+            CardEntity card = cardService.findCard(boardId, columnId, cardId);
             CardResponseDto result = cardService.updateCard(card, requestDto);
             return ResponseEntity.ok().body(result);
         } catch (RejectedExecutionException e) {
@@ -54,10 +59,12 @@ public class CardController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponseDto> deleteCard(@PathVariable Long id){
+    @DeleteMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
+    public ResponseEntity<ApiResponseDto> deleteCard( @PathVariable Long boardId,
+                                                      @PathVariable Long columnId,
+                                                      @PathVariable Long cardId){
         try{
-            CardEntity card = cardService.findCard(id);
+            CardEntity card = cardService.findCard(boardId, columnId, cardId);
             cardService.deleteCard(card);
             return ResponseEntity.ok().body(new ApiResponseDto("삭제 성공", HttpStatus.OK.value()));
         }catch(RejectedExecutionException e){
@@ -66,12 +73,13 @@ public class CardController {
     }
 
     // 작업 할당
-    @PostMapping("/columns/{columnId}/cards/{cardId}")
+    @PostMapping("boards/{boardId}/columns/{columnId}/cards/{cardId}/assignTask")
     public ResponseEntity<CardAssignResponseDto> assignTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                            @PathVariable Long boardId,
                                                             @PathVariable Long columnId,
                                                             @PathVariable Long cardId,
                                                             @RequestBody CardAssignRequestDto requestDto){
-        CardAssignResponseDto result = cardService.assignTask(userDetails.getUser(), columnId, cardId, requestDto);
+        CardAssignResponseDto result = cardService.assignTask(userDetails.getUser(), boardId, columnId, cardId, requestDto);
         return ResponseEntity.status(201).body(result);
     }
 
