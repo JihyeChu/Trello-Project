@@ -27,11 +27,11 @@ public class CardResponseDto {
         this.color = card.getColor();
         this.closingDate = card.getClosingDate();
         this.worker = new ArrayList<>();
-        for(CardAssignEntity assignEntity : card.getWorkerList()){
+        for (CardAssignEntity assignEntity : card.getWorkerList()) {
             worker.add(new CardAssignResponseDto(assignEntity));
         }
         this.commentResponseDtos = new ArrayList<>();
-        for(CommentEntity comment : card.getCommentList()){
+        for (CommentEntity comment : card.getCommentList()) {
             commentResponseDtos.add(new CommentResponseDto(comment));
         }
     }

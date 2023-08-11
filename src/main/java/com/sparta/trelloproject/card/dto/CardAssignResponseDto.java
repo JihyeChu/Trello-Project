@@ -1,7 +1,6 @@
 package com.sparta.trelloproject.card.dto;
 
 import com.sparta.trelloproject.card.entity.CardAssignEntity;
-import com.sparta.trelloproject.card.entity.CardEntity;
 import lombok.Getter;
 
 @Getter

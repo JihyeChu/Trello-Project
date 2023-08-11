@@ -1,8 +1,7 @@
 package com.sparta.trelloproject.column.repository;
 
-import com.sparta.trelloproject.board.entity.Board;
-import com.sparta.trelloproject.column.entity.Column;
-import java.util.List;
+import com.sparta.trelloproject.board.entity.BoardEntity;
+import com.sparta.trelloproject.column.entity.ColumnEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

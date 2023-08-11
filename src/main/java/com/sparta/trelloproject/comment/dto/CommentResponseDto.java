@@ -11,7 +11,7 @@ public class CommentResponseDto {
     private String comment;
 
 
-    public CommentResponseDto(CommentEntity comment){
+    public CommentResponseDto(CommentEntity comment) {
         this.comment = comment.getComment();
     }
 

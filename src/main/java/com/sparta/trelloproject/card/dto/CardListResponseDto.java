@@ -9,7 +9,7 @@ public class CardListResponseDto {
 
     private List<CardResponseDto> cardList;
 
-    public CardListResponseDto(List<CardResponseDto> cardList){
+    public CardListResponseDto(List<CardResponseDto> cardList) {
         this.cardList = cardList;
     }
 

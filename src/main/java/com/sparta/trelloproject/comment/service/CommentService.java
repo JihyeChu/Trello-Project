@@ -6,23 +6,14 @@ import com.sparta.trelloproject.comment.dto.CommentRequestDto;
 import com.sparta.trelloproject.comment.dto.CommentResponseDto;
 import com.sparta.trelloproject.comment.entity.CommentEntity;
 import com.sparta.trelloproject.comment.repository.CommentRepository;
-import com.sparta.trelloproject.common.api.ApiResponseDto;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
-import com.sparta.trelloproject.user.entity.User;
-import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.concurrent.RejectedExecutionException;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService{
+public class CommentService {
 
     private final CardService cardService;
     private final CommentRepository commentRepository;
@@ -44,7 +35,7 @@ public class CommentService{
         commentRepository.delete(comment);
     }
 
-    public CommentEntity findComment(Long id){
+    public CommentEntity findComment(Long id) {
         return commentRepository.findById(id).orElseThrow(
                 () -> new NullPointerException("작성한 댓글이 없습니다.")
         );

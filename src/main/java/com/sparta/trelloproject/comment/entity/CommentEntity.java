@@ -9,12 +9,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name="comment")
+@Table(name = "comment")
 public class CommentEntity extends TimeStamped {
 
     @Id
@@ -27,11 +25,11 @@ public class CommentEntity extends TimeStamped {
     private String comment;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name="card_id", nullable = false)
+    @JoinColumn(name = "card_id", nullable = false)
     private CardEntity card;
 
     public CommentEntity(CommentRequestDto requestDto, UserDetailsImpl userDetails, CardEntity card) {
@@ -41,7 +39,7 @@ public class CommentEntity extends TimeStamped {
         this.card = card;
     }
 
-    public void update(CommentRequestDto requestDto,CardEntity card) {
+    public void update(CommentRequestDto requestDto, CardEntity card) {
         this.comment = requestDto.getComment();
         this.card = card;
 

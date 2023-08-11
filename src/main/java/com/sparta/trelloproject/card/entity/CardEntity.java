@@ -1,8 +1,6 @@
 package com.sparta.trelloproject.card.entity;
 
 import com.sparta.trelloproject.board.entity.BoardEntity;
-import com.sparta.trelloproject.card.dto.CardAssignRequestDto;
-import com.sparta.trelloproject.card.dto.CardAssignResponseDto;
 import com.sparta.trelloproject.card.dto.CardRequestDto;
 import com.sparta.trelloproject.column.entity.ColumnEntity;
 import com.sparta.trelloproject.comment.entity.CommentEntity;
@@ -14,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +20,23 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name="card_tb")
+@Table(name = "card_tb")
 public class CardEntity extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="cardname", nullable = false)
+    @Column(name = "cardname", nullable = false)
     private String cardName;
 
-    @Column(name="description", nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Enumerated(EnumType.STRING)
     private ColorEnum color;
 
-    @Column(name="closingdate", nullable = false)
+    @Column(name = "closingdate", nullable = false)
     private LocalDateTime closingDate;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
@@ -54,13 +51,13 @@ public class CardEntity extends TimeStamped {
     private ColumnEntity column;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     private List<CommentEntity> commentList = new ArrayList<>();
 
-    public CardEntity(CardRequestDto requestDto, User user, BoardEntity board, ColumnEntity column){
+    public CardEntity(CardRequestDto requestDto, User user, BoardEntity board, ColumnEntity column) {
         this.cardName = requestDto.getCardName();
         this.description = requestDto.getDescription();
         this.closingDate = requestDto.getClosingDate();

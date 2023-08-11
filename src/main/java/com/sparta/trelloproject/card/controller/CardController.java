@@ -39,17 +39,17 @@ public class CardController {
     }
 
     @GetMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
-    public ResponseEntity<CardResponseDto> getCard( @PathVariable Long boardId,
-                                                    @PathVariable Long columnId,
-                                                    @PathVariable Long cardId) {
+    public ResponseEntity<CardResponseDto> getCard(@PathVariable Long boardId,
+                                                   @PathVariable Long columnId,
+                                                   @PathVariable Long cardId) {
         CardResponseDto result = cardService.getCardById(boardId, columnId, cardId);
         return ResponseEntity.ok().body(result);
     }
 
     @PutMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
-    public ResponseEntity<CardResponseDto> updateCard( @PathVariable Long boardId,
-                                                       @PathVariable Long columnId,
-                                                       @PathVariable Long cardId, @RequestBody CardRequestDto requestDto) {
+    public ResponseEntity<CardResponseDto> updateCard(@PathVariable Long boardId,
+                                                      @PathVariable Long columnId,
+                                                      @PathVariable Long cardId, @RequestBody CardRequestDto requestDto) {
         try {
             CardEntity card = cardService.findCard(boardId, columnId, cardId);
             CardResponseDto result = cardService.updateCard(card, requestDto);
@@ -60,14 +60,14 @@ public class CardController {
     }
 
     @DeleteMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
-    public ResponseEntity<ApiResponseDto> deleteCard( @PathVariable Long boardId,
-                                                      @PathVariable Long columnId,
-                                                      @PathVariable Long cardId){
-        try{
+    public ResponseEntity<ApiResponseDto> deleteCard(@PathVariable Long boardId,
+                                                     @PathVariable Long columnId,
+                                                     @PathVariable Long cardId) {
+        try {
             CardEntity card = cardService.findCard(boardId, columnId, cardId);
             cardService.deleteCard(card);
             return ResponseEntity.ok().body(new ApiResponseDto("삭제 성공", HttpStatus.OK.value()));
-        }catch(RejectedExecutionException e){
+        } catch (RejectedExecutionException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -78,7 +78,7 @@ public class CardController {
                                                             @PathVariable Long boardId,
                                                             @PathVariable Long columnId,
                                                             @PathVariable Long cardId,
-                                                            @RequestBody CardAssignRequestDto requestDto){
+                                                            @RequestBody CardAssignRequestDto requestDto) {
         CardAssignResponseDto result = cardService.assignTask(userDetails.getUser(), boardId, columnId, cardId, requestDto);
         return ResponseEntity.status(201).body(result);
     }

@@ -7,12 +7,11 @@ import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name="cardassign_tb")
+@Table(name = "cardassign_tb")
 public class CardAssignEntity {
 
     @Id
@@ -23,19 +22,19 @@ public class CardAssignEntity {
     private String worker;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="board_id")
+    @JoinColumn(name = "board_id")
     private BoardEntity board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="column_id")
+    @JoinColumn(name = "column_id")
     private ColumnEntity column;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="card_id")
+    @JoinColumn(name = "card_id")
     private CardEntity card;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public CardAssignEntity(CardAssignRequestDto requestDto, BoardEntity board, ColumnEntity column, CardEntity card) {

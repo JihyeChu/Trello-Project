@@ -1,6 +1,6 @@
 package com.sparta.trelloproject.column.dto;
 
-import com.sparta.trelloproject.column.entity.Column;
+import com.sparta.trelloproject.column.entity.ColumnEntity;
 import lombok.Getter;
 import lombok.Setter;
 
