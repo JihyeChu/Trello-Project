@@ -1,13 +1,7 @@
 package com.sparta.trelloproject.board.entity;
 
 import com.sparta.trelloproject.user.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class BoardUser {
+public class BoardUserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +26,9 @@ public class BoardUser {
 
   @ManyToOne
   @JoinColumn(name = "board_id", nullable = false)
-  Board board;
+  BoardEntity board;
 
-  public BoardUser(User collaborateUser, Board board) {
+  public BoardUserEntity(User collaborateUser, BoardEntity board) {
     this.ownerUser = board.getUser();
     this.collaborateUser = collaborateUser;
     this.board = board;
