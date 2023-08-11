@@ -1,6 +1,6 @@
 package com.sparta.trelloproject.board.dto;
 
-import com.sparta.trelloproject.board.entity.BoardUserEntity;
+import com.sparta.trelloproject.board.entity.BoardUser;
 import lombok.Getter;
 
 @Getter
