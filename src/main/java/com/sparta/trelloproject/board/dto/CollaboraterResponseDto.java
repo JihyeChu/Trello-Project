@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class CollaboraterResponseDto {
-  private String collaboraterName;
+    private String collaboraterName;
 
-  public CollaboraterResponseDto(BoardUser boardUser) {
-    this.collaboraterName = boardUser.getCollaborateUser().getUserName();
-  }
+    public CollaboraterResponseDto(BoardUser boardUser) {
+        this.collaboraterName = boardUser.getCollaborateUser().getUserName();
+    }
 }

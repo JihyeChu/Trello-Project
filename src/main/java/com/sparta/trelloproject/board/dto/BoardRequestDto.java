@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class BoardRequestDto {
-  private String boardName;
-  private String description;
-  private ColorEnum color;
+    private String boardName;
+    private String description;
+    private ColorEnum color;
 
 }
