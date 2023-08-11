@@ -1,12 +1,12 @@
 package com.sparta.trelloproject.column.service;
 
-import com.sparta.trelloproject.board.entity.Board;
+import com.sparta.trelloproject.board.entity.BoardEntity;
 import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.column.dto.ColumnMoveDto;
 import com.sparta.trelloproject.column.dto.ColumnRequestDto;
 import com.sparta.trelloproject.column.dto.ColumnResponseDto;
-import com.sparta.trelloproject.column.entity.Column;
+import com.sparta.trelloproject.column.entity.ColumnEntity;
 import com.sparta.trelloproject.column.repository.ColumnRepository;
 import com.sparta.trelloproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -26,24 +26,24 @@ public class ColumnService {
 
     @Transactional
     public void createColumn(User user, Long boardId, ColumnRequestDto requestDto) {
-        Board board = findBoard(boardId);
+        BoardEntity board = findBoard(boardId);
 
         // 보드생성자, 콜라보레이터만 생성가능
         if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("컬럼 생성 권한이 없습니다.");
+            throw new IllegalArgumentException("컬럼생성 권한이 없습니다.");
         }
 
         // position => 1024 씩 증가
-        int position = (board.getColumns().size() != 0) ? (board.getColumns().size() +1) * 1024 : 1024;
+        int position = (board.getColumns().size() != 0) ? (board.getColumns().size() + 1) * 1024 : 1024;
 
-        Column column = new Column(requestDto.getColumnName(), board, user, position);
+        ColumnEntity column = new ColumnEntity(requestDto.getColumnName(), board, user, position);
 
         columnRepository.save(column);
     }
 
     @Transactional(readOnly = true)
     public List<ColumnResponseDto> getColumn(User user, Long boardId) {
-        Board board = findBoard(boardId);
+        BoardEntity board = findBoard(boardId);
 
         if (checkOwnerCollaborater(user, board)) {
             throw new IllegalArgumentException("컬럼 조회 권한이 없습니다.");
@@ -53,10 +53,11 @@ public class ColumnService {
                 .collect(Collectors.toList());
     }
 
+
     @Transactional
     public void updateColumn(User user, ColumnRequestDto requestDto, Long boardId, Long columnId) {
-        Board board = findBoard(boardId);
-        Column column = findColumn(boardId, columnId);
+        BoardEntity board = findBoard(boardId);
+        ColumnEntity column = findColumn(boardId, columnId);
 
         if (checkOwnerCollaborater(user, board)) {
             throw new IllegalArgumentException("컬럼 수정 권한이 없습니다.");
@@ -65,10 +66,11 @@ public class ColumnService {
         column.update(requestDto);
     }
 
+
     @Transactional
     public void deleteColumn(User user, Long boardId, Long columnId) {
-        Board board = findBoard(boardId);
-        Column column = findColumn(boardId, columnId);
+        BoardEntity board = findBoard(boardId);
+        ColumnEntity column = findColumn(boardId, columnId);
 
         if (checkOwnerCollaborater(user, board)) {
             throw new IllegalArgumentException("컬럼 삭제 권한이 없습니다.");
@@ -77,22 +79,23 @@ public class ColumnService {
         columnRepository.delete(column);
     }
 
+
     @Transactional
     public List<ColumnResponseDto> moveColumn(User user, Long boardId, ColumnMoveDto moveDto) {
-        Board board = findBoard(boardId);
+        BoardEntity board = findBoard(boardId);
 
         if (checkOwnerCollaborater(user, board)) {
             throw new IllegalArgumentException("해당 보드의 권한이 없습니다.");
         }
 
         // 이동시킬 컬럼
-        Column currentColumn = findColumn(boardId, (long) moveDto.getSelectColumn());
+        ColumnEntity currentColumn = findColumn(boardId, (long) moveDto.getSelectColumn());
         // selectPosition = 컬럼을 이동시킬 위치
-        Column selectColumn = board.getColumns().get(moveDto.getSelectIndex()-1);
+        ColumnEntity selectColumn = board.getColumns().get(moveDto.getSelectIndex() - 1);
         int selectPosition = selectColumn.getPosition();
 
         // 위치 순으로 정렬된 컬럼
-        List<Column> sortedColumnList = columnRepository.findAllByBoardIdOrderByPositionAsc(boardId);
+        List<ColumnEntity> sortedColumnList = columnRepository.findAllByBoardIdOrderByPositionAsc(boardId);
 
         // selectColumn 앞 혹은 뒤 position
         int aroundPosition;
@@ -107,31 +110,31 @@ public class ColumnService {
     }
 
     // 컬럼 권한 체크
-    private boolean checkOwnerCollaborater(User user, Board board) {
+    public boolean checkOwnerCollaborater(User user, BoardEntity board) {
         boolean result = boardUserRepository.findAllByCollaborateUserAndBoard(user, board).isEmpty()
                 && board.getUser().getId() != user.getId(); // 콜라보레이터에 해당유저 없고 보드생성자도 아닐경우 true.
         return result;
     }
 
-    private Board findBoard(Long boardId) {
+    private BoardEntity findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(
                 () -> new IllegalArgumentException("선택한 Board 가 존재하지 않습니다. boardId : " + boardId));
     }
 
-    private Column findColumn(Long boardId, Long columnId) {
+    private ColumnEntity findColumn(Long boardId, Long columnId) {
         return columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
                 () -> new IllegalArgumentException("선택한 Column 이 존재하지 않습니다. boardId : " + boardId + ", columnId : " + columnId));
     }
 
-    private void move(Column currentColumn, int selectPosition, int aroundPosition) {
-        int movePosition = (selectPosition + aroundPosition) / 2 ;
+    private void move(ColumnEntity currentColumn, int selectPosition, int aroundPosition) {
+        int movePosition = (selectPosition + aroundPosition) / 2;
         currentColumn.moveColumn(movePosition);
     }
 
-    private int getAroundPosition(ColumnMoveDto moveDto, List<Column> sortedColumnList) {
+    private int getAroundPosition(ColumnMoveDto moveDto, List<ColumnEntity> sortedColumnList) {
         int aroundPosition;
-        if (moveDto.getSelectIndex() >= sortedColumnList.size() -1) {
-            aroundPosition = sortedColumnList.get(sortedColumnList.size() -1).getPosition() + 1024;
+        if (moveDto.getSelectIndex() >= sortedColumnList.size() - 1) {
+            aroundPosition = sortedColumnList.get(sortedColumnList.size() - 1).getPosition() + 1024;
         } else if (moveDto.getSelectIndex() == 0) {
             int nextPosition = sortedColumnList.get(1).getPosition();
             aroundPosition = Math.min(nextPosition - 1024, 0);

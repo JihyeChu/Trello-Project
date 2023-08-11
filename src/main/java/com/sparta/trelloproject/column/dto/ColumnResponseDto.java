@@ -1,7 +1,6 @@
 package com.sparta.trelloproject.column.dto;
 
-import com.sparta.trelloproject.column.entity.Column;
-import com.sparta.trelloproject.user.entity.User;
+import com.sparta.trelloproject.column.entity.ColumnEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,7 @@ public class ColumnResponseDto {
     private String columnName;
 //    private List<CardResponseDto> cardList;
 
-    public ColumnResponseDto(Column column) {
+    public ColumnResponseDto(ColumnEntity column) {
         this.columnName = column.getColumnName();
         this.boardId = column.getBoard().getId();
         this.userName = column.getUser().getUserName();

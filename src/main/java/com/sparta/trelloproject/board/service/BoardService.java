@@ -5,8 +5,8 @@ import com.sparta.trelloproject.board.dto.BoardListResponseDto;
 import com.sparta.trelloproject.board.dto.BoardRequestDto;
 import com.sparta.trelloproject.board.dto.BoardResponseDto;
 import com.sparta.trelloproject.board.dto.CollaboraterResponseDto;
-import com.sparta.trelloproject.board.entity.Board;
-import com.sparta.trelloproject.board.entity.BoardUser;
+import com.sparta.trelloproject.board.entity.BoardEntity;
+import com.sparta.trelloproject.board.entity.BoardUserEntity;
 import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.column.dto.ColumnResponseDto;
@@ -38,7 +38,7 @@ public class BoardService {
     public void createBoard(UserDetailsImpl userDetails, BoardRequestDto boardRequestDto)
             throws IOException {
 
-        Board board = Board.builder()
+        BoardEntity board = BoardEntity.builder()
                 .boardName(boardRequestDto.getBoardName())
                 .description(boardRequestDto.getDescription())
                 .color(boardRequestDto.getColor())
@@ -50,20 +50,20 @@ public class BoardService {
 
     // 사용자가 속한 보드 전체조회
     public List<BoardListResponseDto> getBoards(UserDetailsImpl userDetails) {
-        List<Board> allMyBoards = new ArrayList<>();
+        List<BoardEntity> allMyBoards = new ArrayList<>();
 
         // 본인이 콜라보레이터 초대된 보드들 가져오기
-        List<Board> collaborateBoards = boardUserRepository.findAllByCollaborateUser(
+        List<BoardEntity> collaborateBoards = boardUserRepository.findAllByCollaborateUser(
                         userDetails.getUser()).stream()
-                .map(BoardUser::getBoard)
+                .map(BoardUserEntity::getBoard)
                 .collect(Collectors.toList());
-        for (Board collaborateBoard : collaborateBoards) {
+        for (BoardEntity collaborateBoard : collaborateBoards) {
             allMyBoards.add(collaborateBoard);
         }
 
         // 본인이 만든 보드 가져오기
-        List<Board> myBoards = boardRepository.findAllById(userDetails.getUser().getId());
-        for (Board myBoard : myBoards) {
+        List<BoardEntity> myBoards = boardRepository.findAllById(userDetails.getUser().getId());
+        for (BoardEntity myBoard : myBoards) {
             allMyBoards.add(myBoard);
         }
 
@@ -75,7 +75,7 @@ public class BoardService {
     // 보드 단건조회
     // + 해당 보드의 생성자,콜라보레이터 함께 조회
     public BoardResponseDto getBoard(Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         BoardResponseDto boardResponseDto = BoardResponseDto.builder()
@@ -97,7 +97,7 @@ public class BoardService {
     @Transactional
     public void updateBoard(UserDetailsImpl userDetails, Long boardId,
                             BoardRequestDto boardRequestDto) throws IOException {
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         // 보드 생성자만 수정 가능하도록
@@ -115,7 +115,7 @@ public class BoardService {
     // 보드 삭제
     @Transactional
     public void deleteBoard(UserDetailsImpl userDetails, Long boardId) {
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         // 보드 생성자만 삭제 가능하도록
@@ -130,7 +130,7 @@ public class BoardService {
     @Transactional
     public void inviteUser(UserDetailsImpl userDetails, Long boardId, Long userId) {
 
-        Board board = boardRepository.findById(boardId).orElseThrow(() ->
+        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         // 보드의 작성자만 초대가능하도록 예외처리
@@ -153,7 +153,7 @@ public class BoardService {
             throw new IllegalArgumentException("이미 초대하셨습니다.");
         }
 
-        BoardUser boardUser = new BoardUser(user, board);
+        BoardUserEntity boardUser = new BoardUserEntity(user, board);
 
         boardUserRepository.save(boardUser);
 
