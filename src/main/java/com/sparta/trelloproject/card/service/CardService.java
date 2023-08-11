@@ -35,7 +35,7 @@ public class CardService {
         BoardEntity board = findBoard(boardId);
         ColumnEntity column = findColumn(boardId, columnId);
         CardEntity card = new CardEntity(requestDto, user, board, column);
-        card.setUser(user);
+//        card.setUser(user);
 
         cardRepository.save(card);
 
