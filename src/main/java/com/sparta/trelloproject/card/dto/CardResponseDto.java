@@ -18,6 +18,8 @@ public class CardResponseDto {
     private String description;
     private ColorEnum color;
     private LocalDateTime closingDate;
+    private LocalDateTime createAt;
+    private LocalDateTime modified;
     private List<CardAssignResponseDto> worker;
     private List<CommentResponseDto> commentResponseDtos;
 
@@ -26,6 +28,8 @@ public class CardResponseDto {
         this.description = card.getDescription();
         this.color = card.getColor();
         this.closingDate = card.getClosingDate();
+        this.createAt = card.getCreatedAt();
+        this.modified = card.getModifiedAt();
         this.worker = new ArrayList<>();
         for (CardAssignEntity assignEntity : card.getWorkerList()) {
             worker.add(new CardAssignResponseDto(assignEntity));

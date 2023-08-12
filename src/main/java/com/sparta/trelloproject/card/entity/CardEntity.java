@@ -5,7 +5,7 @@ import com.sparta.trelloproject.card.dto.CardRequestDto;
 import com.sparta.trelloproject.column.entity.ColumnEntity;
 import com.sparta.trelloproject.comment.entity.CommentEntity;
 import com.sparta.trelloproject.common.color.ColorEnum;
-import com.sparta.trelloproject.common.timestamped.TimeStamped;
+import com.sparta.trelloproject.common.timestamped.Timestamped;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "card_tb")
-public class CardEntity extends TimeStamped {
+public class CardEntity extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

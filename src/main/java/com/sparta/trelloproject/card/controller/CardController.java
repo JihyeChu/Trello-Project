@@ -31,9 +31,9 @@ public class CardController {
     }
 
 
-    @GetMapping("/columns/{columnId}/cards")
-    public ResponseEntity<CardListResponseDto> getCards() {
-        CardListResponseDto result = cardService.getCards();
+    @GetMapping("/boards/{boardId}/columns/{columnId}/cards")
+    public ResponseEntity<CardListResponseDto> getCards(@PathVariable Long boardId,@PathVariable Long columnId) {
+        CardListResponseDto result = cardService.getCards(boardId, columnId);
 
         return ResponseEntity.ok().body(result);
     }

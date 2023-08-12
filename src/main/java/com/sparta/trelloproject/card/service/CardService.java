@@ -2,7 +2,6 @@ package com.sparta.trelloproject.card.service;
 
 import com.sparta.trelloproject.board.entity.BoardEntity;
 import com.sparta.trelloproject.board.repository.BoardRepository;
-import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.card.dto.*;
 import com.sparta.trelloproject.card.entity.CardAssignEntity;
 import com.sparta.trelloproject.card.entity.CardEntity;
@@ -42,12 +41,16 @@ public class CardService {
         return new CardResponseDto(card);
     }
 
-
     @Transactional(readOnly = true)
-    public CardListResponseDto getCards() {
-        List<CardResponseDto> cardList = cardRepository.findAllByOrderByCreatedAtDesc().stream().map(CardResponseDto::new).toList();
+    public CardListResponseDto getCards(Long boardId, Long columnId) {
+        ColumnEntity column = findColumn(boardId, columnId);
+        List<CardResponseDto> cardList = cardRepository.findAllByColumnOrderByCreatedAtDesc(column)
+                .stream()
+                .map(CardResponseDto::new)
+                .toList();
         return new CardListResponseDto(cardList);
     }
+
 
     @Transactional(readOnly = true)
     public CardResponseDto getCardById(Long boardId, Long columnId, Long cardId) {
