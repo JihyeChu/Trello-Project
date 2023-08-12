@@ -2,6 +2,7 @@ package com.sparta.trelloproject.card.service;
 
 import com.sparta.trelloproject.board.entity.BoardEntity;
 import com.sparta.trelloproject.board.repository.BoardRepository;
+import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.card.dto.*;
 import com.sparta.trelloproject.card.entity.CardAssignEntity;
 import com.sparta.trelloproject.card.entity.CardEntity;
@@ -40,6 +41,7 @@ public class CardService {
 
         return new CardResponseDto(card);
     }
+
 
     @Transactional(readOnly = true)
     public CardListResponseDto getCards(Long boardId, Long columnId) {
