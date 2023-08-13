@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "cardassign_tb")
+@Table(name = "card_assign_tb")
 public class CardAssignEntity {
 
     @Id
@@ -32,10 +32,6 @@ public class CardAssignEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private CardEntity card;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
 
     public CardAssignEntity(CardAssignRequestDto requestDto, BoardEntity board, ColumnEntity column, CardEntity card) {
         this.worker = requestDto.getWorker();

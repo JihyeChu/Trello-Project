@@ -22,12 +22,7 @@ public class UserController {
     //회원가입
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto> sighUp(@RequestBody AuthRequestDto authRequestDto) {
-
-        try {
-            userService.signup(authRequestDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("중복된 Id 입니다.", HttpStatus.BAD_REQUEST.value()));
-        }
+        userService.signup(authRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto("회원가입 성공", HttpStatus.CREATED.value()));
     }
 
@@ -40,22 +35,14 @@ public class UserController {
     //프로필 수정
     @PutMapping("/profile")
     public ResponseEntity<ApiResponseDto> updateProfile(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ProfileRequestDto profileRequestDto) {
-        try {
-            userService.updateProfile(userDetails.getUser().getId(), profileRequestDto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("정보를 수정할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
-        }
+        userService.updateProfile(userDetails.getUser().getId(), profileRequestDto);
         return ResponseEntity.ok().body(new ApiResponseDto("회원정보 수정 성공", HttpStatus.OK.value()));
     }
 
     //비밀번호 수정
     @PutMapping("/password")
     public ResponseEntity<ApiResponseDto> updatePassword(@RequestBody PasswordRequestDto passwordRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        try {
-            userService.updatePassword(passwordRequestDto, userDetails.getUser().getId());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("비밀번호 수정 실패!!" + e.getMessage(), HttpStatus.BAD_REQUEST.value()));
-        }
+        userService.updatePassword(passwordRequestDto, userDetails.getUser().getId());
         return ResponseEntity.ok().body(new ApiResponseDto("비밀번호 수정 성공!!", HttpStatus.OK.value()));
     }
 }

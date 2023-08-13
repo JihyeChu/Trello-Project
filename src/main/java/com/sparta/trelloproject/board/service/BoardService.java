@@ -11,7 +11,6 @@ import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
 import com.sparta.trelloproject.column.dto.ColumnNameResponseDto;
 import com.sparta.trelloproject.column.repository.ColumnRepository;
-import com.sparta.trelloproject.column.service.ColumnService;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.repository.UserRepository;
@@ -33,7 +32,6 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardUserRepository boardUserRepository;
     private final ColumnRepository columnRepository;
-    private final ColumnService columnService;
 
     // 보드 생성
     @Transactional
@@ -51,6 +49,7 @@ public class BoardService {
     }
 
     // 사용자가 속한 보드 전체조회
+    @Transactional(readOnly = true)
     public List<BoardListResponseDto> getBoards(User user) {
         List<BoardEntity> allMyBoards = new ArrayList<>();
 
@@ -76,15 +75,16 @@ public class BoardService {
 
     // 보드 단건조회
     // + 해당 보드의 생성자,콜라보레이터 함께 조회
+    @Transactional(readOnly = true)
     public BoardResponseDto getBoard(User user, Long boardId) {
         BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
-        if (columnService.checkOwnerCollaborater(user, board)) {
-          throw new IllegalArgumentException("보드 생성자 / 콜라보레이터 가 아닌 사용자는 조회할 수 없습니다.");
+        if (checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
-        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
+        return BoardResponseDto.builder()
                 .boardId(board.getId())
                 .boardName(board.getBoardName())
                 .description(board.getDescription())
@@ -97,15 +97,13 @@ public class BoardService {
                         .map(ColumnNameResponseDto::new)
                         .collect(Collectors.toList()))
                 .build();
-        return boardResponseDto;
     }
 
     // 보드 수정
     @Transactional
     public void updateBoard(UserDetailsImpl userDetails, Long boardId,
                             BoardRequestDto boardRequestDto) throws IOException {
-        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("보드를 찾을 수 없습니다."));
+        BoardEntity board = findBoard(boardId);
 
         // 보드 생성자만 수정 가능하도록
         if (!board.getUser().getId().equals(userDetails.getUser().getId())) {
@@ -122,8 +120,7 @@ public class BoardService {
     // 보드 삭제
     @Transactional
     public void deleteBoard(UserDetailsImpl userDetails, Long boardId) {
-        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("보드를 찾을 수 없습니다."));
+        BoardEntity board = findBoard(boardId);
 
         // 보드 생성자만 삭제 가능하도록
         if (!board.getUser().getId().equals(userDetails.getUser().getId())) {
@@ -137,8 +134,7 @@ public class BoardService {
     @Transactional
     public void inviteUser(UserDetailsImpl userDetails, Long boardId, Long userId) {
 
-        BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
-                new IllegalArgumentException("보드를 찾을 수 없습니다."));
+        BoardEntity board = findBoard(boardId);
 
         // 보드의 작성자만 초대가능하도록 예외처리
         if (board.getUser().getId() != userDetails.getUser().getId()) {
@@ -163,6 +159,16 @@ public class BoardService {
         BoardUserEntity boardUser = new BoardUserEntity(user, board);
 
         boardUserRepository.save(boardUser);
+    }
 
+    // 보드 권한 체크
+    public boolean checkOwnerCollaborator(User user, BoardEntity board) {
+        return boardUserRepository.findAllByCollaborateUserAndBoard(user, board).isEmpty()
+                && board.getUser().getId() != user.getId();
+    }
+
+    public BoardEntity findBoard(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow(
+                () -> new IllegalArgumentException("선택한 Board 가 존재하지 않습니다. boardId : " + boardId));
     }
 }

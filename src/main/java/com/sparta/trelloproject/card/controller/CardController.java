@@ -1,7 +1,9 @@
 package com.sparta.trelloproject.card.controller;
 
-import com.sparta.trelloproject.card.dto.*;
-import com.sparta.trelloproject.card.entity.CardEntity;
+import com.sparta.trelloproject.card.dto.CardAssignRequestDto;
+import com.sparta.trelloproject.card.dto.CardListResponseDto;
+import com.sparta.trelloproject.card.dto.CardRequestDto;
+import com.sparta.trelloproject.card.dto.CardResponseDto;
 import com.sparta.trelloproject.card.service.CardService;
 import com.sparta.trelloproject.common.api.ApiResponseDto;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
@@ -11,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.RejectedExecutionException;
-
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -21,68 +21,59 @@ public class CardController {
     private final CardService cardService;
 
     @PostMapping("/boards/{boardId}/columns/{columnId}/cards")
-    public ResponseEntity<CardResponseDto> createCard(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                      @PathVariable("boardId") Long boardId,
-                                                      @PathVariable("columnId") Long columnId,
-                                                      @RequestBody CardRequestDto requestDto) {
-        CardResponseDto result = cardService.createCard(requestDto, userDetails.getUser(), boardId, columnId);
-
-        return ResponseEntity.status(201).body(result);
+    public ResponseEntity<ApiResponseDto> createCard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @PathVariable Long boardId,
+                                                     @PathVariable Long columnId,
+                                                     @RequestBody CardRequestDto requestDto) {
+        cardService.createCard(requestDto, userDetails.getUser(), boardId, columnId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto("카드 생성 완료", HttpStatus.CREATED.value()));
     }
 
 
-
     @GetMapping("/boards/{boardId}/columns/{columnId}/cards")
-    public ResponseEntity<CardListResponseDto> getCards(@PathVariable Long boardId,@PathVariable Long columnId) {
-        CardListResponseDto result = cardService.getCards(boardId, columnId);
-
-
+    public ResponseEntity<CardListResponseDto> getCards(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                        @PathVariable Long boardId,
+                                                        @PathVariable Long columnId) {
+        CardListResponseDto result = cardService.getCards(userDetails.getUser(), boardId, columnId);
         return ResponseEntity.ok().body(result);
     }
 
     @GetMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
-    public ResponseEntity<CardResponseDto> getCard(@PathVariable Long boardId,
+    public ResponseEntity<CardResponseDto> getCard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                   @PathVariable Long boardId,
                                                    @PathVariable Long columnId,
                                                    @PathVariable Long cardId) {
-        CardResponseDto result = cardService.getCardById(boardId, columnId, cardId);
+        CardResponseDto result = cardService.getCardById(userDetails.getUser(), boardId, columnId, cardId);
         return ResponseEntity.ok().body(result);
     }
 
     @PutMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
-    public ResponseEntity<CardResponseDto> updateCard(@PathVariable Long boardId,
-                                                      @PathVariable Long columnId,
-                                                      @PathVariable Long cardId, @RequestBody CardRequestDto requestDto) {
-        try {
-            CardEntity card = cardService.findCard(boardId, columnId, cardId);
-            CardResponseDto result = cardService.updateCard(card, requestDto);
-            return ResponseEntity.ok().body(result);
-        } catch (RejectedExecutionException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<ApiResponseDto> updateCard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @PathVariable Long boardId,
+                                                     @PathVariable Long columnId,
+                                                     @PathVariable Long cardId,
+                                                     @RequestBody CardRequestDto requestDto) {
+        cardService.updateCard(userDetails.getUser(), boardId, columnId, cardId, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto("카드 수정 완료", HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/boards/{boardId}/columns/{columnId}/cards/{cardId}")
-    public ResponseEntity<ApiResponseDto> deleteCard(@PathVariable Long boardId,
+    public ResponseEntity<ApiResponseDto> deleteCard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @PathVariable Long boardId,
                                                      @PathVariable Long columnId,
                                                      @PathVariable Long cardId) {
-        try {
-            CardEntity card = cardService.findCard(boardId, columnId, cardId);
-            cardService.deleteCard(card);
-            return ResponseEntity.ok().body(new ApiResponseDto("삭제 성공", HttpStatus.OK.value()));
-        } catch (RejectedExecutionException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        cardService.deleteCard(userDetails.getUser(), boardId, columnId, cardId);
+        return ResponseEntity.ok().body(new ApiResponseDto("카드 삭제 성공", HttpStatus.OK.value()));
     }
 
     // 작업 할당
-    @PostMapping("boards/{boardId}/columns/{columnId}/cards/{cardId}/assignTask")
-    public ResponseEntity<CardAssignResponseDto> assignTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                            @PathVariable Long boardId,
-                                                            @PathVariable Long columnId,
-                                                            @PathVariable Long cardId,
-                                                            @RequestBody CardAssignRequestDto requestDto) {
-        CardAssignResponseDto result = cardService.assignTask(userDetails.getUser(), boardId, columnId, cardId, requestDto);
-        return ResponseEntity.status(201).body(result);
+    @PostMapping("boards/{boardId}/columns/{columnId}/cards/{cardId}/assign")
+    public ResponseEntity<ApiResponseDto> assignTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @PathVariable Long boardId,
+                                                     @PathVariable Long columnId,
+                                                     @PathVariable Long cardId,
+                                                     @RequestBody CardAssignRequestDto requestDto) {
+        cardService.assignTask(userDetails.getUser(), boardId, columnId, cardId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto("작업자 할당 완료", HttpStatus.CREATED.value()));
     }
-
 }
