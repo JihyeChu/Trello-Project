@@ -28,13 +28,12 @@ public class UserService {
         String userName = authRequestDto.getUserName();
         String password = passwordEncoder.encode(authRequestDto.getPassword());
         String email = authRequestDto.getEmail();
-        UserRoleEnum role = authRequestDto.getRole();
 
         if (userRepository.findByUserName(userName).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
         }
 
-        User user = new User(userName, password, email, role);
+        User user = new User(userName, password, email);
         userRepository.save(user);
 
         Password updatePassword = new Password(password, user);
@@ -89,6 +88,12 @@ public class UserService {
 
     public User findUser(Long id) {
         return userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
+        );
+    }
+
+    public User findUser(String username) {
+        return userRepository.findByUserName(username).orElseThrow(
                 () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
         );
     }
