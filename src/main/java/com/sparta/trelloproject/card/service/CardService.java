@@ -1,18 +1,15 @@
 package com.sparta.trelloproject.card.service;
 
 import com.sparta.trelloproject.board.entity.BoardEntity;
-import com.sparta.trelloproject.board.repository.BoardRepository;
-import com.sparta.trelloproject.board.repository.BoardUserRepository;
+import com.sparta.trelloproject.board.service.BoardService;
 import com.sparta.trelloproject.card.dto.*;
 import com.sparta.trelloproject.card.entity.CardAssignEntity;
 import com.sparta.trelloproject.card.entity.CardEntity;
 import com.sparta.trelloproject.card.repository.CardAssignRepository;
 import com.sparta.trelloproject.card.repository.CardRepository;
 import com.sparta.trelloproject.column.entity.ColumnEntity;
-import com.sparta.trelloproject.column.repository.ColumnRepository;
 import com.sparta.trelloproject.column.service.ColumnService;
 import com.sparta.trelloproject.user.entity.User;
-import com.sparta.trelloproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,16 +21,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
 
-    private final BoardRepository boardRepository;
-    private final ColumnRepository columnRepository;
+    private final BoardService boardService;
+    private final ColumnService columnService;
     private final CardRepository cardRepository;
     private final CardAssignRepository cardAssignRepository;
-    private final ColumnService columnService;
 
     @Transactional
     public CardResponseDto createCard(CardRequestDto requestDto, User user, Long boardId, Long columnId) {
-        BoardEntity board = findBoard(boardId);
-        ColumnEntity column = findColumn(boardId, columnId);
+        BoardEntity board = boardService.findBoard(boardId);
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+        ColumnEntity column = columnService.findColumn(boardId, columnId);
         CardEntity card = new CardEntity(requestDto, user, board, column);
 //        card.setUser(user);
 
@@ -44,8 +43,12 @@ public class CardService {
 
 
     @Transactional(readOnly = true)
-    public CardListResponseDto getCards(Long boardId, Long columnId) {
-        ColumnEntity column = findColumn(boardId, columnId);
+    public CardListResponseDto getCards(User user, Long boardId, Long columnId) {
+        BoardEntity board = boardService.findBoard(boardId);
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+        ColumnEntity column = columnService.findColumn(boardId, columnId);
         List<CardResponseDto> cardList = cardRepository.findAllByColumnOrderByCreatedAtDesc(column)
                 .stream()
                 .map(CardResponseDto::new)
@@ -53,21 +56,33 @@ public class CardService {
         return new CardListResponseDto(cardList);
     }
 
-
     @Transactional(readOnly = true)
-    public CardResponseDto getCardById(Long boardId, Long columnId, Long cardId) {
+    public CardResponseDto getCardById(User user, Long boardId, Long columnId, Long cardId) {
+        BoardEntity board = boardService.findBoard(boardId);
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
         CardEntity card = findCard(boardId, columnId, cardId);
         return new CardResponseDto(card);
     }
 
     @Transactional
-    public CardResponseDto updateCard(CardEntity card, CardRequestDto requestDto) {
+    public void updateCard(User user, Long boardId, Long columnId, Long cardId, CardRequestDto requestDto) {
+        BoardEntity board = boardService.findBoard(boardId);
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+        CardEntity card = findCard(boardId, columnId, cardId);
         card.update(requestDto);
-
-        return new CardResponseDto(card);
     }
 
-    public void deleteCard(CardEntity card) {
+    @Transactional
+    public void deleteCard(User user, Long boardId, Long columnId, Long cardId) {
+        BoardEntity board = boardService.findBoard(boardId);
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+        CardEntity card = findCard(boardId, columnId, cardId);
         cardRepository.delete(card);
     }
 
@@ -75,12 +90,12 @@ public class CardService {
     // 작업 할당
     @Transactional
     public CardAssignResponseDto assignTask(User user, Long boardId, Long columnId, Long cardId, CardAssignRequestDto requestDto) {
-        BoardEntity board = findBoard(boardId);
-        ColumnEntity column = findColumn(boardId, columnId);
+        BoardEntity board = boardService.findBoard(boardId);
+        ColumnEntity column = columnService.findColumn(boardId, columnId);
         CardEntity card = findCard(boardId, columnId, cardId);
 
-        if (columnService.checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("권한이 없습니다.");
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 //        boardUserRepository.findAllByOwnerUserAndCollaborateUserAndBoard(board.getUser(), user, board);
 
@@ -90,26 +105,8 @@ public class CardService {
         return new CardAssignResponseDto(assignEntity);
     }
 
-    public BoardEntity findBoard(Long id) {
-        return boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("선택한 보드는 존재하지 않습니다.")
-        );
-    }
-
-    public ColumnEntity findColumn(Long boardId, Long columnId) {
-        return columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 칼럼은 존재하지 않습니다.")
-        );
-    }
-
     public CardEntity findCard(Long boardId, Long columnId, Long cardId) {
         return cardRepository.findByBoardIdAndColumnIdAndId(boardId, columnId, cardId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 카드는 존재하지 않습니다.")
-        );
-    }
-
-    public CardEntity findCard(Long cardId) {
-        return cardRepository.findById(cardId).orElseThrow(
                 () -> new IllegalArgumentException("선택한 카드는 존재하지 않습니다.")
         );
     }
