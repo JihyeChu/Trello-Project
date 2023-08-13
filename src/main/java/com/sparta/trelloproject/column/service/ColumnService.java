@@ -31,8 +31,9 @@ public class ColumnService {
             throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
-        // position => 1024 씩 증가
-        int position = (board.getColumns().size() != 0) ? (board.getColumns().size() + 1) * 1024 : 1024;
+        // position => 1024 씩 증가, 이동 후 생성 시 position 이 가장 큰 값 + 1024
+        List<ColumnEntity> sortedColumnList = columnRepository.findAllByBoardIdOrderByPositionAsc(board.getId());
+        int position = (sortedColumnList.size() != 0) ? sortedColumnList.get((sortedColumnList.size() - 1)).getPosition() + 1024 : 1024;
 
         ColumnEntity column = new ColumnEntity(requestDto.getColumnName(), board, user, position);
 
@@ -87,7 +88,7 @@ public class ColumnService {
         }
 
         // 이동시킬 컬럼
-        ColumnEntity currentColumn = findColumn(boardId, (long) moveDto.getSelectColumn());
+        ColumnEntity currentColumn = findColumn(boardId, (long) moveDto.getSelectColumnId());
         // selectPosition = 컬럼을 이동시킬 위치
         ColumnEntity selectColumn = board.getColumns().get(moveDto.getSelectIndex() - 1);
         int selectPosition = selectColumn.getPosition();
@@ -96,8 +97,7 @@ public class ColumnService {
         List<ColumnEntity> sortedColumnList = columnRepository.findAllByBoardIdOrderByPositionAsc(boardId);
 
         // selectColumn 앞 혹은 뒤 position
-        int aroundPosition;
-        aroundPosition = getAroundPosition(moveDto, sortedColumnList);
+        int aroundPosition = getAroundPosition(moveDto, sortedColumnList);
 
         // 이동
         move(currentColumn, selectPosition, aroundPosition);
@@ -122,8 +122,8 @@ public class ColumnService {
         int aroundPosition;
         if (moveDto.getSelectIndex() >= sortedColumnList.size() - 1) {
             aroundPosition = sortedColumnList.get(sortedColumnList.size() - 1).getPosition() + 1024;
-        } else if (moveDto.getSelectIndex() == 0) {
-            int nextPosition = sortedColumnList.get(1).getPosition();
+        } else if (moveDto.getSelectIndex() == 1) {
+            int nextPosition = sortedColumnList.get(0).getPosition();
             aroundPosition = Math.min(nextPosition - 1024, 0);
         } else {
             int prevPosition = sortedColumnList.get(moveDto.getSelectIndex() - 1).getPosition();
