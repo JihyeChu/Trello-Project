@@ -81,7 +81,7 @@ public class BoardService {
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
         if (checkOwnerCollaborator(user, board)) {
-            throw new IllegalArgumentException("보드 생성자 / 콜라보레이터 가 아닌 사용자는 조회할 수 없습니다.");
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
         return BoardResponseDto.builder()
