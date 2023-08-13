@@ -28,17 +28,18 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private Password passwordEntity;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password){
-        this.password = password;
-    }
     public User(String userName, String password, String email, UserRoleEnum role) {
         this.userName = userName;
         this.password = password;
         this.email = email;
         this.role = role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

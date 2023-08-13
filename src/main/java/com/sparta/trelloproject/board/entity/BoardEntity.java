@@ -15,13 +15,14 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "board_tb")
 public class BoardEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "board_name", nullable = false)
+    @Column(nullable = false)
     private String boardName;
 
     @Column
@@ -35,10 +36,10 @@ public class BoardEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board_tb", cascade = CascadeType.ALL)
     private List<BoardUserEntity> boardUsers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board_tb", cascade = CascadeType.ALL)
     private List<ColumnEntity> columns = new ArrayList<>();
 
     @Builder
