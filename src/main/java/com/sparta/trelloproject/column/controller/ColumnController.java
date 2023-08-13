@@ -23,7 +23,7 @@ public class ColumnController {
     // 컬럼 생성
     @PostMapping("/{boardId}/columns")
     public ResponseEntity<ApiResponseDto> createColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       @PathVariable("boardId") Long boardId,
+                                                       @PathVariable Long boardId,
                                                        @RequestBody ColumnRequestDto requestDto) {
         columnService.createColumn(userDetails.getUser(), boardId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto("컬럼 생성 완료", HttpStatus.CREATED.value()));
@@ -32,7 +32,7 @@ public class ColumnController {
     // 본인이 속한 보드의 컬럼 조회
     @GetMapping("/{boardId}/columns")
     public ResponseEntity<List<ColumnResponseDto>> getColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                             @PathVariable("boardId") Long boardId) {
+                                                             @PathVariable Long boardId) {
         List<ColumnResponseDto> columnList = columnService.getColumn(userDetails.getUser(), boardId);
         return ResponseEntity.ok().body(columnList);
     }
@@ -41,8 +41,8 @@ public class ColumnController {
     @PutMapping("/{boardId}/columns/{columnId}")
     public ResponseEntity<ApiResponseDto> updateColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                        @RequestBody ColumnRequestDto requestDto,
-                                                       @PathVariable("boardId") Long boardId,
-                                                       @PathVariable("columnId") Long columnId) {
+                                                       @PathVariable Long boardId,
+                                                       @PathVariable Long columnId) {
         columnService.updateColumn(userDetails.getUser(), requestDto, boardId, columnId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto("컬럼 수정 완료", HttpStatus.OK.value()));
     }
@@ -50,15 +50,15 @@ public class ColumnController {
     // 컬럼 삭제
     @DeleteMapping("/{boardId}/columns/{columnId}")
     public ResponseEntity<ApiResponseDto> deleteColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                       @PathVariable("boardId") Long boardId,
-                                                       @PathVariable("columnId") Long columnId) {
+                                                       @PathVariable Long boardId,
+                                                       @PathVariable Long columnId) {
         columnService.deleteColumn(userDetails.getUser(), boardId, columnId);
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto("컬럼 삭제 완료", HttpStatus.OK.value()));
     }
 
     @PutMapping("/{boardId}/columns/order")
     public ResponseEntity<List<ColumnResponseDto>> moveColumn(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                              @PathVariable("boardId") Long boardId,
+                                                              @PathVariable Long boardId,
                                                               @RequestBody ColumnMoveDto moveDto) {
         List<ColumnResponseDto> results = columnService.moveColumn(userDetails.getUser(), boardId, moveDto);
         return ResponseEntity.ok().body(results);

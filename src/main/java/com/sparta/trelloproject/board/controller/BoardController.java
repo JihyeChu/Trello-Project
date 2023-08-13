@@ -24,9 +24,8 @@ public class BoardController {
 
     // 보드 생성
     @PostMapping("/boards")
-    public ResponseEntity<ApiResponseDto> createBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody BoardRequestDto boardRequestDto) throws IOException {
+    public ResponseEntity<ApiResponseDto> createBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                      @RequestBody BoardRequestDto boardRequestDto) throws IOException {
 
         boardService.createBoard(userDetails, boardRequestDto);
 
@@ -42,16 +41,17 @@ public class BoardController {
 
     // 보드 단건 조회
     @GetMapping("/boards/{boardId}")
-    public BoardResponseDto getBoard(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long boardId) {
+    public BoardResponseDto getBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                     @PathVariable Long boardId) {
 
         return boardService.getBoard(userDetails.getUser(), boardId);
     }
 
     // 보드 수정
     @PutMapping("/boards/{boardId}")
-    public ResponseEntity<ApiResponseDto> updateBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long boardId,
-            @RequestBody BoardRequestDto boardRequestDto) throws IOException {
+    public ResponseEntity<ApiResponseDto> updateBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                      @PathVariable Long boardId,
+                                                      @RequestBody BoardRequestDto boardRequestDto) throws IOException {
 
         boardService.updateBoard(userDetails, boardId, boardRequestDto);
 
@@ -60,8 +60,8 @@ public class BoardController {
 
     // 보드 삭제
     @DeleteMapping("/boards/{boardId}")
-    public ResponseEntity<ApiResponseDto> deleteBoard(
-            @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long boardId) {
+    public ResponseEntity<ApiResponseDto> deleteBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                      @PathVariable Long boardId) {
 
         boardService.deleteBoard(userDetails, boardId);
 
@@ -70,9 +70,9 @@ public class BoardController {
 
     // 보드 콜라보레이터 추가
     @PostMapping("/boards/{boardId}/invite/{userId}")
-    public ResponseEntity<ApiResponseDto> inviteUser(
-            @AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long boardId,
-            @PathVariable Long userId) {
+    public ResponseEntity<ApiResponseDto> inviteUser(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                     @PathVariable Long boardId,
+                                                     @PathVariable Long userId) {
 
         boardService.inviteUser(userDetails, boardId, userId);
 
