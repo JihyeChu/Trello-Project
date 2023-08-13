@@ -23,6 +23,7 @@ public class UserService {
     private final PasswordRepository passwordRepository;
 
     // 회원가입
+    @Transactional
     public void signup(AuthRequestDto authRequestDto) {
         String userName = authRequestDto.getUserName();
         String password = passwordEncoder.encode(authRequestDto.getPassword());
@@ -41,6 +42,7 @@ public class UserService {
     }
 
     // 프로필 조회
+    @Transactional(readOnly = true)
     public ProfileResponseDto getProfile(Long id) {
         User user = findUser(id);
 

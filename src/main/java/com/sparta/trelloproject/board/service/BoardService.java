@@ -49,6 +49,7 @@ public class BoardService {
     }
 
     // 사용자가 속한 보드 전체조회
+    @Transactional(readOnly = true)
     public List<BoardListResponseDto> getBoards(User user) {
         List<BoardEntity> allMyBoards = new ArrayList<>();
 
@@ -74,6 +75,7 @@ public class BoardService {
 
     // 보드 단건조회
     // + 해당 보드의 생성자,콜라보레이터 함께 조회
+    @Transactional(readOnly = true)
     public BoardResponseDto getBoard(User user, Long boardId) {
         BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));

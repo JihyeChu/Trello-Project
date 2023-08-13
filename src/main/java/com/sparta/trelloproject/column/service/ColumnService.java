@@ -1,8 +1,7 @@
 package com.sparta.trelloproject.column.service;
 
 import com.sparta.trelloproject.board.entity.BoardEntity;
-import com.sparta.trelloproject.board.repository.BoardRepository;
-import com.sparta.trelloproject.board.repository.BoardUserRepository;
+import com.sparta.trelloproject.board.service.BoardService;
 import com.sparta.trelloproject.column.dto.ColumnMoveDto;
 import com.sparta.trelloproject.column.dto.ColumnRequestDto;
 import com.sparta.trelloproject.column.dto.ColumnResponseDto;
@@ -21,16 +20,15 @@ import java.util.stream.Collectors;
 public class ColumnService {
 
     private final ColumnRepository columnRepository;
-    private final BoardRepository boardRepository;
-    private final BoardUserRepository boardUserRepository;
+    private final BoardService boardService;
 
     @Transactional
     public void createColumn(User user, Long boardId, ColumnRequestDto requestDto) {
-        BoardEntity board = findBoard(boardId);
+        BoardEntity board = boardService.findBoard(boardId);
 
         // 보드생성자, 콜라보레이터만 생성가능
-        if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("컬럼생성 권한이 없습니다.");
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
         // position => 1024 씩 증가
@@ -43,10 +41,10 @@ public class ColumnService {
 
     @Transactional(readOnly = true)
     public List<ColumnResponseDto> getColumn(User user, Long boardId) {
-        BoardEntity board = findBoard(boardId);
+        BoardEntity board = boardService.findBoard(boardId);
 
-        if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("컬럼 조회 권한이 없습니다.");
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
         return columnRepository.findAllByBoardIdOrderByPositionAsc(boardId).stream()
                 .map(ColumnResponseDto::new)
@@ -56,11 +54,11 @@ public class ColumnService {
 
     @Transactional
     public void updateColumn(User user, ColumnRequestDto requestDto, Long boardId, Long columnId) {
-        BoardEntity board = findBoard(boardId);
+        BoardEntity board = boardService.findBoard(boardId);
         ColumnEntity column = findColumn(boardId, columnId);
 
-        if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("컬럼 수정 권한이 없습니다.");
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
         column.update(requestDto);
@@ -69,11 +67,11 @@ public class ColumnService {
 
     @Transactional
     public void deleteColumn(User user, Long boardId, Long columnId) {
-        BoardEntity board = findBoard(boardId);
+        BoardEntity board = boardService.findBoard(boardId);
         ColumnEntity column = findColumn(boardId, columnId);
 
-        if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("컬럼 삭제 권한이 없습니다.");
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
         columnRepository.delete(column);
@@ -82,10 +80,10 @@ public class ColumnService {
 
     @Transactional
     public List<ColumnResponseDto> moveColumn(User user, Long boardId, ColumnMoveDto moveDto) {
-        BoardEntity board = findBoard(boardId);
+        BoardEntity board = boardService.findBoard(boardId);
 
-        if (checkOwnerCollaborater(user, board)) {
-            throw new IllegalArgumentException("해당 보드의 권한이 없습니다.");
+        if (boardService.checkOwnerCollaborator(user, board)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
         // 이동시킬 컬럼
@@ -109,19 +107,8 @@ public class ColumnService {
                 .collect(Collectors.toList());
     }
 
-    // 컬럼 권한 체크
-    public boolean checkOwnerCollaborater(User user, BoardEntity board) {
-        boolean result = boardUserRepository.findAllByCollaborateUserAndBoard(user, board).isEmpty()
-                && board.getUser().getId() != user.getId(); // 콜라보레이터에 해당유저 없고 보드생성자도 아닐경우 true.
-        return result;
-    }
 
-    private BoardEntity findBoard(Long boardId) {
-        return boardRepository.findById(boardId).orElseThrow(
-                () -> new IllegalArgumentException("선택한 Board 가 존재하지 않습니다. boardId : " + boardId));
-    }
-
-    private ColumnEntity findColumn(Long boardId, Long columnId) {
+    public ColumnEntity findColumn(Long boardId, Long columnId) {
         return columnRepository.findByBoardIdAndId(boardId, columnId).orElseThrow(
                 () -> new IllegalArgumentException("선택한 Column 이 존재하지 않습니다. boardId : " + boardId + ", columnId : " + columnId));
     }
