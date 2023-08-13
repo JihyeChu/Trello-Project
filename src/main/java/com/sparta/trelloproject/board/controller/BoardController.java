@@ -37,14 +37,14 @@ public class BoardController {
     @GetMapping("/boards")
     public List<BoardListResponseDto> getBoards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return boardService.getBoards(userDetails);
+        return boardService.getBoards(userDetails.getUser());
     }
 
     // 보드 단건 조회
     @GetMapping("/boards/{boardId}")
-    public BoardResponseDto getBoard(@PathVariable Long boardId) {
+    public BoardResponseDto getBoard(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long boardId) {
 
-        return boardService.getBoard(boardId);
+        return boardService.getBoard(userDetails.getUser(), boardId);
     }
 
     // 보드 수정

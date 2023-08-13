@@ -42,7 +42,7 @@ public class RoleCheckAop {
             UserDetailsImpl userDetails = (UserDetailsImpl)auth.getPrincipal();
             User loginUser = userDetails.getUser();
 
-            if(!(loginUser.getRole().equals(UserRoleEnum.ADMIN) || card.getUser().equals(loginUser))){
+            if(!(loginUser.getRole().equals(UserRoleEnum.ADMIN) || card.getUser().getId().equals(loginUser.getId()))){
                 log.warn("[AOP] 작성자만 card를 수정/삭제 할 수 있습니다.");
                 throw new RejectedExecutionException();
             }
@@ -64,7 +64,7 @@ public class RoleCheckAop {
             User loginUser = userDetails.getUser();
 
             // 댓글 작성자(comment.user)와 요청자(user)가 같은지 또는 Admin 인지 체크 (아니면 예외 발생)
-            if(!(loginUser.getRole().equals(UserRoleEnum.ADMIN) || comment.getUser().equals(loginUser))){
+            if(!(loginUser.getRole().equals(UserRoleEnum.ADMIN) || comment.getUser().getId().equals(loginUser.getId()))){
                 log.warn("[AOP] 작성자만 댓글을 수정/삭제 할 수 있습니다.");
                 throw new RejectedExecutionException();
             }

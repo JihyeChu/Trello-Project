@@ -9,8 +9,9 @@ import com.sparta.trelloproject.board.entity.BoardEntity;
 import com.sparta.trelloproject.board.entity.BoardUserEntity;
 import com.sparta.trelloproject.board.repository.BoardRepository;
 import com.sparta.trelloproject.board.repository.BoardUserRepository;
-import com.sparta.trelloproject.column.dto.ColumnResponseDto;
+import com.sparta.trelloproject.column.dto.ColumnNameResponseDto;
 import com.sparta.trelloproject.column.repository.ColumnRepository;
+import com.sparta.trelloproject.column.service.ColumnService;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
 import com.sparta.trelloproject.user.entity.User;
 import com.sparta.trelloproject.user.repository.UserRepository;
@@ -32,6 +33,7 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardUserRepository boardUserRepository;
     private final ColumnRepository columnRepository;
+    private final ColumnService columnService;
 
     // 보드 생성
     @Transactional
@@ -49,12 +51,12 @@ public class BoardService {
     }
 
     // 사용자가 속한 보드 전체조회
-    public List<BoardListResponseDto> getBoards(UserDetailsImpl userDetails) {
+    public List<BoardListResponseDto> getBoards(User user) {
         List<BoardEntity> allMyBoards = new ArrayList<>();
 
         // 본인이 콜라보레이터 초대된 보드들 가져오기
         List<BoardEntity> collaborateBoards = boardUserRepository.findAllByCollaborateUser(
-                        userDetails.getUser()).stream()
+                        user).stream()
                 .map(BoardUserEntity::getBoard)
                 .collect(Collectors.toList());
         for (BoardEntity collaborateBoard : collaborateBoards) {
@@ -62,7 +64,7 @@ public class BoardService {
         }
 
         // 본인이 만든 보드 가져오기
-        List<BoardEntity> myBoards = boardRepository.findAllById(userDetails.getUser().getId());
+        List<BoardEntity> myBoards = boardRepository.findAllByUserId(user.getId());
         for (BoardEntity myBoard : myBoards) {
             allMyBoards.add(myBoard);
         }
@@ -74,11 +76,16 @@ public class BoardService {
 
     // 보드 단건조회
     // + 해당 보드의 생성자,콜라보레이터 함께 조회
-    public BoardResponseDto getBoard(Long boardId) {
+    public BoardResponseDto getBoard(User user, Long boardId) {
         BoardEntity board = boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("보드를 찾을 수 없습니다."));
 
+        if (columnService.checkOwnerCollaborater(user, board)) {
+          throw new IllegalArgumentException("보드 생성자 / 콜라보레이터 가 아닌 사용자는 조회할 수 없습니다.");
+        }
+
         BoardResponseDto boardResponseDto = BoardResponseDto.builder()
+                .boardId(board.getId())
                 .boardName(board.getBoardName())
                 .description(board.getDescription())
                 .color(board.getColor())
@@ -86,8 +93,8 @@ public class BoardService {
                 .collaboraters(board.getBoardUsers().stream()
                         .map(CollaboraterResponseDto::new)
                         .collect(Collectors.toList()))
-                .columnList(columnRepository.findAllByBoard(board).stream()
-                        .map(ColumnResponseDto::new)
+                .columnNames(columnRepository.findAllByBoardIdOrderByPositionAsc(board.getId()).stream()
+                        .map(ColumnNameResponseDto::new)
                         .collect(Collectors.toList()))
                 .build();
         return boardResponseDto;

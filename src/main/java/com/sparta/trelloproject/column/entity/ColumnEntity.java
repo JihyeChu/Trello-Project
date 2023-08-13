@@ -1,9 +1,12 @@
 package com.sparta.trelloproject.column.entity;
 
 import com.sparta.trelloproject.board.entity.BoardEntity;
+import com.sparta.trelloproject.card.entity.CardEntity;
 import com.sparta.trelloproject.column.dto.ColumnRequestDto;
 import com.sparta.trelloproject.user.entity.User;
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,9 +31,9 @@ public class ColumnEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-//
-//    @OneToMany(mappedBy = "column", cascade = CascadeType.REMOVE)
-//    private List<Card> cardList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "column", cascade = CascadeType.REMOVE)
+    private List<CardEntity> cardList = new ArrayList<>();
 
     public ColumnEntity(String columnName, BoardEntity board, User user, int position) {
         this.columnName = columnName;
