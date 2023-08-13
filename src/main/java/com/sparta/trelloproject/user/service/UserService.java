@@ -10,7 +10,6 @@ import com.sparta.trelloproject.user.entity.UserRoleEnum;
 import com.sparta.trelloproject.user.repository.PasswordRepository;
 import com.sparta.trelloproject.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,22 +40,6 @@ public class UserService {
         passwordRepository.save(updatePassword);
     }
 
-    // 로그인
-    public void login(AuthRequestDto authRequestDto) {
-        String userName = authRequestDto.getUserName();
-        String password = authRequestDto.getPassword();
-
-        //Id 확인
-        User user = userRepository.findByUserName(userName).orElseThrow(
-                () -> new IllegalArgumentException("Id가 틀렸습니다.")
-        );
-
-        //패스워드 확인
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-    }
-
     // 프로필 조회
     public ProfileResponseDto getProfile(Long id) {
         User user = findUser(id);
@@ -74,15 +57,15 @@ public class UserService {
 
     // 비밀번호 변경
     @Transactional
-    public void updatePassword(PasswordRequestDto passwordRequestDto, Long id){
+    public void updatePassword(PasswordRequestDto passwordRequestDto, Long id) {
         User user = findUser(id);
         Password passwordEntity = passwordRepository.findByUser(user);
 
-        if(passwordEncoder.matches(passwordRequestDto.getPassword(), user.getPassword())){
+        if (passwordEncoder.matches(passwordRequestDto.getPassword(), user.getPassword())) {
             String newPassword = passwordEncoder.encode(passwordRequestDto.getNewPassword());
             String password = checkPassword(passwordRequestDto, passwordEntity);
 
-            if(password.equals(passwordRequestDto.getCheckNewPassword())){
+            if (password.equals(passwordRequestDto.getCheckNewPassword())) {
                 //전 비밀번호를 저장해야함!! 오류났던부분
                 passwordEntity.setPassword(user.getPassword());
                 user.setPassword(newPassword);
@@ -90,19 +73,19 @@ public class UserService {
                 throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
             }
         } else {
-                throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
-            }
+            throw new IllegalArgumentException("기존 비밀번호가 일치하지 않습니다.");
         }
+    }
 
-    private String checkPassword(PasswordRequestDto passwordRequestDto, Password passwordEntity){
+    private String checkPassword(PasswordRequestDto passwordRequestDto, Password passwordEntity) {
 
-        if (passwordEncoder.matches(passwordRequestDto.getNewPassword(), passwordEntity.getPassword())){
+        if (passwordEncoder.matches(passwordRequestDto.getNewPassword(), passwordEntity.getPassword())) {
             throw new IllegalArgumentException("이전 비밀번호와 동일합니다.");
         }
         return passwordRequestDto.getNewPassword();
     }
 
-    public User findUser(Long id){
+    public User findUser(Long id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("사용자를 찾을 수 없습니다.")
         );
