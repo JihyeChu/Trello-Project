@@ -67,7 +67,7 @@ public class CardController {
     }
 
     // 작업 할당
-    @PostMapping("boards/{boardId}/columns/{columnId}/cards/{cardId}/assignTask")
+    @PostMapping("boards/{boardId}/columns/{columnId}/cards/{cardId}/assign")
     public ResponseEntity<ApiResponseDto> assignTask(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                      @PathVariable Long boardId,
                                                      @PathVariable Long columnId,

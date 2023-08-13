@@ -3,7 +3,6 @@ package com.sparta.trelloproject.card.dto;
 import com.sparta.trelloproject.card.entity.CardAssignEntity;
 import com.sparta.trelloproject.card.entity.CardEntity;
 import com.sparta.trelloproject.comment.dto.CommentResponseDto;
-import com.sparta.trelloproject.comment.entity.CommentEntity;
 import com.sparta.trelloproject.common.color.ColorEnum;
 import lombok.Getter;
 
@@ -13,7 +12,7 @@ import java.util.List;
 
 @Getter
 public class CardResponseDto {
-
+    private Long cardId;
     private String cardName;
     private String description;
     private ColorEnum color;
@@ -21,9 +20,10 @@ public class CardResponseDto {
     private LocalDateTime createAt;
     private LocalDateTime modified;
     private List<CardAssignResponseDto> worker;
-    private List<CommentResponseDto> commentResponseDtos;
+    private List<CommentResponseDto> comments;
 
     public CardResponseDto(CardEntity card) {
+        this.cardId = card.getId();
         this.cardName = card.getCardName();
         this.description = card.getDescription();
         this.color = card.getColor();
@@ -34,9 +34,8 @@ public class CardResponseDto {
         for (CardAssignEntity assignEntity : card.getWorkerList()) {
             worker.add(new CardAssignResponseDto(assignEntity));
         }
-        this.commentResponseDtos = new ArrayList<>();
-        for (CommentEntity comment : card.getCommentList()) {
-            commentResponseDtos.add(new CommentResponseDto(comment));
-        }
+        this.comments = card.getCommentList().stream()
+                .map(CommentResponseDto::new)
+                .toList();
     }
 }

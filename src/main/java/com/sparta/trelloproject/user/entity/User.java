@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Getter
 @RequiredArgsConstructor
+@Table(name = "user_tb")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,18 +22,17 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "role")
     @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    private UserRoleEnum role = UserRoleEnum.USER;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
     private Password passwordEntity;
 
-    public User(String userName, String password, String email, UserRoleEnum role) {
+    public User(String userName, String password, String email) {
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.role = role;
     }
 
     public void setEmail(String email) {

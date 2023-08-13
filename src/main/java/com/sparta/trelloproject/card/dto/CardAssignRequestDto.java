@@ -6,5 +6,4 @@ import lombok.Getter;
 public class CardAssignRequestDto {
 
     private String worker;
-
 }

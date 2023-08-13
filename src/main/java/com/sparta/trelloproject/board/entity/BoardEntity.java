@@ -36,10 +36,10 @@ public class BoardEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "board_tb", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<BoardUserEntity> boardUsers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "board_tb", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<ColumnEntity> columns = new ArrayList<>();
 
     @Builder

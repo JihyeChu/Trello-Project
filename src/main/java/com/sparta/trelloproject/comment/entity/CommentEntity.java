@@ -33,11 +33,11 @@ public class CommentEntity extends Timestamped {
     @JoinColumn(name = "column_id")
     private ColumnEntity column;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id", nullable = false)
     private CardEntity card;
 
