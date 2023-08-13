@@ -4,6 +4,7 @@ import com.sparta.trelloproject.common.api.ApiResponseDto;
 import com.sparta.trelloproject.common.jwt.JwtUtil;
 import com.sparta.trelloproject.common.security.UserDetailsImpl;
 import com.sparta.trelloproject.user.dto.AuthRequestDto;
+import com.sparta.trelloproject.user.dto.PasswordRequestDto;
 import com.sparta.trelloproject.user.dto.ProfileRequestDto;
 import com.sparta.trelloproject.user.dto.ProfileResponseDto;
 import com.sparta.trelloproject.user.service.UserService;
@@ -64,6 +65,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ApiResponseDto("정보를 수정할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
         }
         return ResponseEntity.ok().body(new ApiResponseDto("회원정보 수정 성공", HttpStatus.OK.value()));
+    }
 
+    //비밀번호 수정
+    @PutMapping("/password")
+    public ResponseEntity<ApiResponseDto> updatePassword(@RequestBody PasswordRequestDto passwordRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        try{
+            userService.updatePassword(passwordRequestDto, userDetails.getUser().getId());
+        } catch (IllegalArgumentException e){
+            return  ResponseEntity.badRequest().body(new ApiResponseDto("비밀번호 수정 실패!!" + e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+        } return ResponseEntity.ok().body(new ApiResponseDto("비밀번호 수정 성공!!", HttpStatus.OK.value()));
     }
 }

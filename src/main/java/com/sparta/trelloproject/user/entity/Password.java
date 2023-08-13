@@ -16,13 +16,13 @@ public class Password {
     private Long id;
 
     @Column
-    private String firstPassword;
+    private String password;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User user;
 
     public Password(String password, User user) {
-        this.firstPassword = password;
+        this.password = password;
         this.user = user;
     }
 }
