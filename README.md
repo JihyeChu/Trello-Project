@@ -61,10 +61,17 @@
 </details>
 <hr/>
 
-### ERD
+### 초기 설계 ERD
 <details>
 <summary>더보기</summary>
 <img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/81f25a84-ac0e-40f6-8d1b-7c4ef5c93ab1'>
+</details>
+<hr/>
+
+### 최종 ERD
+<details>
+<summary>더보기</summary>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/133615790/4f7b57be-e3eb-4c83-ab3d-48affcfdaefc'>
 </details>
 <hr/>
 
