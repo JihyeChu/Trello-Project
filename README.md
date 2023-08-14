@@ -64,7 +64,7 @@
 ### ERD
 <details>
 <summary>더보기</summary>
-<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/2dcdcb21-74ae-4371-af8c-76cb8e844e8f'>
+<img src='https://github.com/JihyeChu/Trello-Project/assets/51440636/81f25a84-ac0e-40f6-8d1b-7c4ef5c93ab1'>
 </details>
 <hr/>
 
