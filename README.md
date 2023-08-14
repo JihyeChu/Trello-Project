@@ -75,6 +75,13 @@
 </details>
 <hr/>
 
+### RESTful API
+<details>
+<summary>더보기</summary>
+https://documenter.getpostman.com/view/27928312/2s9Xy5MqjH
+</details>
+<hr/>
+
 ### 역할분담    
 | 이름 | 역할 |
 | --- | --- |
